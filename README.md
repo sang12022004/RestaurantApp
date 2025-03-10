@@ -1,196 +1,141 @@
-<<<<<<< HEAD
-# RestaurantApp - React Native Setup Guide
+# React Native Base Setup
 
-## Project Structure
+## 1. Cấu trúc thư mục
+
 ```
 restaurantApp/
-│-- android/               # Android-specific project files
-│-- ios/                   # iOS-specific project files
-│-- node_modules/          # Installed npm packages
-│-- src/                   # Source code directory
-│   ├── components/        # Reusable UI components
-│   ├── screens/           # App screens
-│   ├── navigation/        # React Navigation setup
-│   ├── assets/            # Images, fonts, etc.
-│   ├── utils/             # Helper functions and utilities
-│   ├── store/             # State management (Redux, Context API, etc.)
-│-- .gitignore             # Files ignored by Git
-│-- App.tsx                # Root component
-│-- package.json           # Dependencies and project info
-│-- tsconfig.json          # TypeScript configuration
-│-- babel.config.js        # Babel configuration
-│-- metro.config.js        # Metro bundler configuration
-│-- README.md              # Project documentation
+├── android/               # Mã nguồn Android
+├── ios/                   # Mã nguồn iOS
+├── src/                   # Mã nguồn chính
+│   ├── components/        # Component tái sử dụng
+│   ├── screens/           # Màn hình chính
+│   ├── navigation/        # Điều hướng
+│   ├── assets/            # Hình ảnh, biểu tượng
+│   ├── utils/             # Hàm tiện ích
+│   ├── hooks/             # Custom Hooks
+│   ├── context/           # Redux/Context API
+├── App.tsx                # Entry point
+├── package.json           # Dependencies
+├── tsconfig.json          # TypeScript config
+├── babel.config.js        # Babel config
+├── metro.config.js        # Metro bundler config
+├── jest.config.js         # Jest config
+├── .eslintrc.js           # ESLint config
+├── .prettierrc            # Prettier config
+└── README.md              # Hướng dẫn
 ```
 
-## Prerequisites
-### Install Required Tools
-#### MacOS:
-```sh
-brew install node
-brew install watchman
-sudo gem install cocoapods
-```
-#### Windows:
-- Install Node.js from [Node.js Official Website](https://nodejs.org/)
-- Install [Chocolatey](https://chocolatey.org/install) and run:
-  ```sh
-  choco install -y nodejs-lts openjdk11
-  ```
-- Install Android Studio and set up the Android SDK.
+## 2. Cài đặt & chạy dự án
 
-## Setup Project
-1. Clone the repository:
+### MacBook
+
+1. Cài đặt môi trường:
    ```sh
-   git clone https://github.com/your-repo/restaurantApp.git
-   cd restaurantApp
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Setup iOS dependencies (MacOS only):
-   ```sh
-   cd ios
-   pod install --repo-update
-   cd ..
+   brew install node watchman openjdk@17
+   sudo gem install cocoapods
+   echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+   source ~/.zshrc
    ```
 
-## Running the App
-### Android:
-1. Start Metro bundler:
+### Windows
+
+1. Cài đặt môi trường:
    ```sh
-   npx react-native start
+   choco install nodejs openjdk17
    ```
-2. Run on an Android device/emulator:
-   ```sh
-   npx react-native run-android
-   ```
+   - Cài đặt **Android Studio** & cấu hình `ANDROID_HOME`, `JAVA_HOME`
 
-### iOS (MacOS only):
-1. Start Metro bundler:
-   ```sh
-   npx react-native start
-   ```
-2. Run on an iOS simulator:
-   ```sh
-   npx react-native run-ios
-   ```
-
-## Troubleshooting
-- If Metro bundler is not running, manually start it with `npx react-native start`.
-- If Android emulator does not launch, manually start it from **Android Studio > AVD Manager**.
-- If iOS build fails, try:
-  ```sh
-  cd ios
-  pod install --repo-update
-  cd ..
-  ```
-
-## Additional Notes
-- Use TypeScript for development (`.tsx` and `.ts` files).
-- Ensure `ANDROID_HOME` and `JAVA_HOME` are properly set for Android development.
-- Check `npx react-native doctor` for missing dependencies.
-- Use `npm run lint` to check for linting errors.
-
-Happy Coding! 🚀
-
-=======
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
-# Getting Started
-
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
-
-## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 2.1. Khởi tạo dự án
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+npx @react-native-community/cli init restaurantApp --template react-native-template-typescript
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+### 2.2. Cài đặt dependencies
 
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+cd restaurantApp
+npm install
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### 2.3. Cài đặt CocoaPods (iOS)
 
 ```sh
-bundle install
+cd ios
+pod install --repo-update
+cd ..
 ```
 
-Then, and every time you update your native dependencies, run:
+### 2.4. Chạy ứng dụng
+
+#### Chạy khởi đầu
+```sh
+npx react-native start --reset-cache
+```
+
+#### Android
 
 ```sh
-bundle exec pod install
+npx react-native run-android
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+Nếu lỗi emulator:
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+~/Android/Sdk/emulator/emulator -avd Pixel_7_API_34
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+#### iOS
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```sh
+xed ios
+cmd + B
+```
 
-## Step 3: Modify your app
+## 3. Lỗi phổ biến & cách khắc phục
 
-Now that you have successfully run the app, let's make changes!
+### ❌ `ERROR: JAVA_HOME is set to an invalid directory`
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+👉 **Fix:**
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```sh
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+```
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Thêm vào `~/.zshrc` (Mac) hoặc `~/.bashrc` (Windows WSL).
 
-## Congratulations! :tada:
+### ❌ `error Failed to build iOS project. "xcodebuild" exited with error code '70'`
 
-You've successfully run and modified your React Native App. :partying_face:
+👉 **Fix:**
 
-### Now what?
+```sh
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+sudo xcodebuild -runFirstLaunch
+cd ios && pod install --repo-update && cd ..
+```
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+### ❌ `Couldn’t find template.config.js`
 
-# Troubleshooting
+👉 **Fix:**
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```sh
+rm -rf ~/.npm/_npx ~/.npm/_cacache
+npx clear-npx-cache
+```
 
-# Learn More
+### ❌ Emulator Android không khởi động
 
-To learn more about React Native, take a look at the following resources:
+👉 **Fix:**
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
->>>>>>> 98bca21 (Initial commit)
+```sh
+npx react-native doctor
+~/Android/Sdk/emulator/emulator -avd Pixel_7_API_34
+```
+
+## 📌 Ghi chú
+
+- Chạy `npx react-native doctor` kiểm tra môi trường.
+- Dùng **Node.js LTS** tránh lỗi.
+- Nếu lỗi, thử `npm cache clean --force` rồi cài lại dự án.
+
+🚀 **Chúc bạn thành công!**
