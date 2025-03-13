@@ -68,6 +68,11 @@ cd ..
 
 ### 2.4. Chạy ứng dụng
 
+#### Chạy khởi đầu
+```sh
+npx react-native start --reset-cache
+```
+
 #### Android
 
 ```sh
