@@ -8,8 +8,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { login } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('123456');
 
   const handleLogin = () => {
     const isSuccess = login(username, password);
