@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
@@ -13,9 +13,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    const isSuccess = login(username, password);
+  const handleLogin = async () => {
+    setLoading(true);
+    const isSuccess = await login(username, password);
+    setLoading(false);
+
     if (isSuccess) {
       navigation.replace('Home');
     } else {
@@ -50,8 +54,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Xác nhận</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Xác nhận</Text>}
       </TouchableOpacity>
 
       {/* Modal thông báo đăng nhập thất bại */}
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: '59.2%',
+    height: '60%',
     backgroundColor: '#007bff',
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
