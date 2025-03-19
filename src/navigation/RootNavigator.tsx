@@ -20,7 +20,7 @@ const RootNavigator = () => {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Detail"component={DetailRestaurant} options={{ headerTitle: 'Chi Tiết Nhà Hàng' }}/>
+        <Stack.Screen name="Detail"component={DetailRestaurant} options={{  headerShown: false  }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

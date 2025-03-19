@@ -10,6 +10,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
   hours: string;
   menu: MenuItem[];
   overview: string;
+  img: string;
 }
 
 export interface MenuItem {
@@ -42,6 +43,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
         { name: "Bì Chả", price: 40000, category: "Món chính", description: "Bì chả tự làm, hương vị truyền thống." },
         { name: "Trà Tắc", price: 15000, category: "Nước uống" },
       ],
+      img: "https://placehold.co/600x400"
     },
     {
       id: 2,
@@ -56,6 +58,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
         { name: "Nem Rán", price: 30000, category: "Món ăn kèm", description: "Nem rán giòn, chấm kèm nước mắm pha." },
         { name: "Nước Sấu", price: 20000, category: "Nước uống" },
       ],
+       img: "https://placehold.co/600x400"
     },
   ]);
 
