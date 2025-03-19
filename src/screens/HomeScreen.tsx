@@ -48,7 +48,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity 
               style={HomeScreenStyles.card} 
-              onPress={() => navigation.navigate('Detail', { restaurant: item })}
+              //onPress={() => navigation.navigate('Detail', { restaurant: item })}
             >
               <Image source={{ uri: item.image }} style={HomeScreenStyles.image} />
               <View style={HomeScreenStyles.info}>
