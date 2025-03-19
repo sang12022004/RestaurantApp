@@ -2,22 +2,19 @@ import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
-import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigation.replace('Login');
+  const goToProfile = () => {
+    navigation.navigate('ProfileScreen'); // Điều hướng qua ProfileScreen
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home Screen</Text>
-      <Button title="Đăng xuất" onPress={handleLogout} />
+      <Button title="Profile" onPress={goToProfile} />
     </View>
   );
 };
