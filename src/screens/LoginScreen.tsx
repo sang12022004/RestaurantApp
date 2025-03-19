@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
+import LoginStyles from '../styles/LoginScreenStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -21,16 +22,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Đăng nhập</Text>
+    <View style={LoginStyles.container}>
+      <Text style={LoginStyles.title}>Đăng nhập</Text>
       <TextInput
-        style={styles.input}
+        style={LoginStyles.input}
         placeholder="Tài khoản"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
-        style={styles.input}
+        style={LoginStyles.input}
         placeholder="Mật khẩu"
         value={password}
         onChangeText={setPassword}
@@ -41,28 +42,5 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingLeft: 10,
-  },
-});
 
 export default LoginScreen;
