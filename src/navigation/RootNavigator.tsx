@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import { Restaurant } from '../types/restaurantTypes';
 import RestaurantDetail from '../screens/RestaurantDetail';
+import SpeechToTextDemo from '../screens/SpeechToTextDemo';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -21,6 +22,7 @@ const RootNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Detail" component={RestaurantDetail} options={{ title: 'Chi tiết nhà hàng' }} />
+        <Stack.Screen name="SpeechToText" component={SpeechToTextDemo} />
       </Stack.Navigator>
     </NavigationContainer>
   );

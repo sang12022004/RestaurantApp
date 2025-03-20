@@ -6,9 +6,9 @@ import { useAuth } from '../context/AuthContext';
 import { restaurants } from '../services/restaurantService';
 import HomeScreenStyles from '../styles/HomeScreenStyles';
 import SearchBar from '../components/SearchBar';
-
+import SpeechToText from '../components/SpeechToText';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
-
+import { useNavigation } from '@react-navigation/native';
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { logout } = useAuth();
   const [filteredRestaurants, setFilteredRestaurants] = useState(restaurants);
@@ -33,6 +33,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   console.log('Dữ liệu đang hiển thị:', filteredRestaurants);
   console.log('Danh sách nhà hàng:', restaurants);
   return (
+
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" backgroundColor="#33CCFF" />
 
@@ -40,6 +41,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <View style={[HomeScreenStyles.headerBackground, { height: height * 0.33 }]} />
 
       <View style={HomeScreenStyles.container}>
+      <TouchableOpacity onPress={() => navigation.navigate('SpeechToText')}>
+        <Text>Speech to Text</Text>
+      </TouchableOpacity>
         <Text style={HomeScreenStyles.TextTrangChu}>Danh Sách Nhà Hàng</Text>
         <SearchBar onSearch={handleSearch} />
         <FlatList
