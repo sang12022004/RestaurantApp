@@ -21,7 +21,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(false);
 
     if (isSuccess) {
-      navigation.replace('Home');
+      navigation.replace('Home', { username });
     } else {
       setModalVisible(true);
     }

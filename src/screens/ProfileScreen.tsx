@@ -14,14 +14,14 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
 
   const [profile, setProfile] = useState({
     name: 'Nguyen Van A',
-    gender: 'Nam',
+    gender: 1,
     phone: '0909909090',
     email: 'vana@gmail.com',
     day: '23',
     month: '01',
     year: '1990',
   });
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleSave = () => {
     console.log('Dữ liệu người dùng:', profile);
@@ -32,8 +32,10 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
     setModalVisible(true);
   };
 
+  const name = `${user?.surname} ${user?.lastName}`
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -49,22 +51,22 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
         <Text>Họ Tên:</Text>
         <TextInput
           style={styles.input}
-          value={profile.name}
+          value={name}
           onChangeText={(text) => setProfile({ ...profile, name: text })}
         />
 
         <Text>Giới tính:</Text>
         <View style={styles.genderContainer}>
           <RadioButton
-            value="Nam"
-            status={profile.gender === 'Nam' ? 'checked' : 'unchecked'}
-            onPress={() => setProfile({ ...profile, gender: 'Nam' })}
+            value="0"
+            status={user?.gender === 0 ? 'checked' : 'unchecked'}
+            onPress={() => setProfile({ ...profile, gender: 0 })}
           />
           <Text>Nam</Text>
           <RadioButton
-            value="Nữ"
-            status={profile.gender === 'Nữ' ? 'checked' : 'unchecked'}
-            onPress={() => setProfile({ ...profile, gender: 'Nữ' })}
+            value="1"
+            status={user?.gender === 1 ? 'checked' : 'unchecked'}
+            onPress={() => setProfile({ ...profile, gender: 1 })}
           />
           <Text>Nữ</Text>
         </View>
@@ -73,7 +75,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
         <TextInput
           style={styles.input}
           keyboardType="numeric"
-          value={profile.phone}
+          value={user?.phone}
           onChangeText={(text) => setProfile({ ...profile, phone: text })}
         />
 
@@ -81,7 +83,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
         <TextInput
           style={styles.input}
           keyboardType="email-address"
-          value={profile.email}
+          value={user?.email}
           onChangeText={(text) => setProfile({ ...profile, email: text })}
         />
 
@@ -139,7 +141,10 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
                 onPress={() => {
                     setModalVisible(false);
                     logout();
-                    navigation.replace('Login');
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Login' }],
+                    });
                 }}
                 >
                 <Text style={styles.modalButtonText}>Đăng xuất</Text>

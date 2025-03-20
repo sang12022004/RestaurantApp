@@ -7,8 +7,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: undefined;
-  ProfileScreen: undefined;
+  Home: { username: string };
+  ProfileScreen: { username: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
