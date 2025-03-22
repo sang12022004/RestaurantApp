@@ -8,7 +8,7 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice/voice';
+import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice';
 
 interface SpeechToTextProps {
   onTextResult?: (text: string) => void;
