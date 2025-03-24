@@ -8,7 +8,7 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice';
+import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice/voice';
 
 interface SpeechToTextProps {
   onTextResult?: (text: string) => void;
@@ -104,36 +104,23 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
     setError('');
     setIsLoading(true);
 
-    //const hasPermission = await requestMicrophonePermission();
-    //if (!hasPermission) {
-    //  setError('Không có quyền truy cập microphone');
-    //  setIsLoading(false);
-    //  return;
-    //}
-
     try {
-      await Voice.start('vi-VN'); // Tiếng Việt, có thể thay đổi thành 'en-US' cho tiếng Anh
-    } catch (e) {
-      console.error(e);
-       if (e.message && e.message.includes('permission')) {
-             const hasPermission = await requestMicrophonePermission();
-             if (!hasPermission) {
-               setError('Không có quyền truy cập microphone');
-               setIsLoading(false);
-               return;
-             }
-             // Thử lại sau khi có quyền
-             try {
-               await Voice.start('vi-VN');
-             } catch (err) {
-               setError('Không thể khởi động nhận dạng giọng nói');
-               setIsLoading(false);
-             }
-           } else {
-             setError('Không thể khởi động nhận dạng giọng nói');
-             setIsLoading(false);
-           }
-       }
+      await Voice.start('vi-VN');
+    } catch (error) {
+      console.error('Voice start error:', error);
+
+      if (error.message && error.message.includes('null')) {
+        setError('Thư viện Voice chưa được khởi tạo đúng cách.');
+      } else if (error.message && error.message.includes('permission')) {
+        const hasPermission = await requestMicrophonePermission();
+        if (!hasPermission) {
+          setError('Không có quyền truy cập microphone.');
+        }
+      } else {
+        setError('Không thể khởi động nhận dạng giọng nói.');
+      }
+      setIsLoading(false);
+    }
   };
 
   const stopListening = async () => {
