@@ -1,68 +1,85 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import LoginStyles from '../styles/LoginScreenStyles'; 
+
+
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { login } = useAuth();
   const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('123456');
+  const [password, setPassword] = useState('123');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    const isSuccess = login(username, password);
+  const handleLogin = async () => {
+    setLoading(true);
+    const isSuccess = await login(username, password);
+    setLoading(false);
+
     if (isSuccess) {
       navigation.replace('Home');
     } else {
-      Alert.alert('Đăng nhập thất bại', 'Sai tài khoản hoặc mật khẩu!');
+      setModalVisible(true);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Đăng nhập</Text>
+    <View style={LoginStyles.container}>
+      <View style={LoginStyles.topBackground} />
+      <Text style={LoginStyles.title}>Đăng nhập</Text>
+      
       <TextInput
-        style={styles.input}
+        style={LoginStyles.input}
         placeholder="Tài khoản"
         value={username}
         onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Mật khẩu"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
+        placeholderTextColor="#aaa"
       />
 
-      <Button title="Xác nhận" onPress={handleLogin} />
+      <View style={LoginStyles.passwordContainer}>
+        <TextInput
+          style={LoginStyles.passwordInput}
+          placeholder="Mật khẩu"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!isPasswordVisible}
+          placeholderTextColor="#aaa"
+        />
+        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={LoginStyles.iconContainer}>
+          <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={24} color="#aaa" />
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={LoginStyles.button} onPress={handleLogin} disabled={loading}>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={LoginStyles.buttonText}>Xác nhận</Text>}
+      </TouchableOpacity>
+
+      {/* Modal thông báo đăng nhập thất bại */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={LoginStyles.modalContainer}>
+          <View style={LoginStyles.modalContent}>
+            <Text style={LoginStyles.modalTitle}>Đăng nhập thất bại</Text>
+            <Text style={LoginStyles.modalMessage}>Tài khoản hoặc mật khẩu không chính xác!</Text>
+            <TouchableOpacity style={LoginStyles.modalButton} onPress={() => setModalVisible(false)}>
+              <Text style={LoginStyles.modalButtonText}>Đóng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingLeft: 10,
-  },
-});
 
 export default LoginScreen;

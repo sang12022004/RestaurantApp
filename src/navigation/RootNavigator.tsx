@@ -3,14 +3,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
-import DetailRestaurant from '../screens/DetailRestaurantScreen';
-import '../context/RestaurantContext.tsx'
+import { Restaurant } from '../types/restaurantTypes';
+import RestaurantDetail from '../screens/RestaurantDetail';
 
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  Detail: { restaurant:Restaurant};
-};  
+  Detail: { restaurant: Restaurant };
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -20,7 +20,7 @@ const RootNavigator = () => {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Detail"component={DetailRestaurant} options={{  headerShown: false  }}/>
+        <Stack.Screen name="Detail" component={RestaurantDetail} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

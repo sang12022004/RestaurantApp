@@ -1,32 +1,39 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import axios from 'axios';
 
 // Định nghĩa kiểu dữ liệu cho context
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
 // Tạo Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Tạo tài khoản giả để kiểm tra đăng nhập
-const FAKE_USER = {
-  username: 'admin',
-  password: '123456',
-};
-
 // Provider Component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const login = (username: string, password: string): boolean => {
-    if (username === FAKE_USER.username && password === FAKE_USER.password) {
-      setIsLoggedIn(true);
-      return true;
+  const login = async (username: string, password: string): Promise<boolean> => {
+    try {
+      const response = await axios.get('https://6724d671c39fedae05b2efb7.mockapi.io/0306221384/TruongDuyTrong/account');
+      
+      if (response.status === 200) {
+        const users = response.data;
+        const user = users.find((u: any) => u.username === username && u.password === password);
+  
+        if (user) {
+          setIsLoggedIn(true);
+          return true;
+        }
+      }
+    } catch (error) {
+      console.error('Lỗi khi đăng nhập:', error);
     }
     return false;
   };
+  
 
   const logout = () => setIsLoggedIn(false);
 
