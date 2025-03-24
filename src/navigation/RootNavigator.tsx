@@ -5,11 +5,13 @@ import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import { Restaurant } from '../types/restaurantTypes';
 import RestaurantDetail from '../screens/RestaurantDetail';
+import ProfileScreen from '../screens/ProfileScreen';
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: undefined;
+  Home: { username: string };
   Detail: { restaurantId: string };
+  ProfileScreen: { username: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -21,6 +23,7 @@ const RootNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Detail" component={RestaurantDetail} options={{ title: 'Chi tiết nhà hàng' }} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

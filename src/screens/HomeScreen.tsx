@@ -6,13 +6,15 @@ import { useAuth } from '../context/AuthContext';
 import HomeScreenStyles from '../styles/HomeScreenStyles';
 import SearchBar from '../components/SearchBar';
 import { useRestaurants, Restaurant } from '../hooks/useRestaurants';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
+const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { logout } = useAuth();
+  const { username } = route.params; // Nhận dữ liệu từ Login
   const { restaurants, loading, error } = useRestaurants();
   const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(restaurants);
   const { height } = Dimensions.get('window');
@@ -47,7 +49,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <View style={[HomeScreenStyles.headerBackground, { height: height * 0.33 }]} />
 
       <View style={HomeScreenStyles.container}>
+        
+      <View style={HomeScreenStyles.headerRow}>
         <Text style={HomeScreenStyles.TextTrangChu}>Danh Sách Nhà Hàng</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { username })}>
+          <Icon name="user-circle" size={30} color="#333" />
+        </TouchableOpacity>
+      </View>
+
         <SearchBar onSearch={handleSearch} />
 
         {loading ? (

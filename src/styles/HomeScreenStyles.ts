@@ -59,6 +59,13 @@ const HomeScreenStyles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  
 });
 
 export default HomeScreenStyles;
