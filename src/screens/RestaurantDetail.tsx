@@ -1,33 +1,53 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableOpacity, StatusBar, ScrollView, View, Text, Image } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
-import { Dish } from '../types/restaurantTypes';
+import Icons from 'react-native-vector-icons/FontAwesome';
 import RestaurantDetailStyles from '../styles/RestaurantDetailStyles';
+import Tabs from './tabs/tabs';
+import RestaurantTabContent from './tabs/RestaurantTabContent';
+import { useRestaurantDetail } from '../hooks/useRestaureantDetail';
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
 const RestaurantDetail = () => {
   const route = useRoute<DetailScreenRouteProp>();
-  const { restaurant } = route.params;
+  const { restaurantId } = route.params;
+
+  const { restaurant, loading, error } = useRestaurantDetail(restaurantId);
+  const [activeTab, setActiveTab] = useState('Overview');
+
+  if (loading) return <Text>Đang tải...</Text>;
+  if (error) return <Text>{error}</Text>;
+  if (!restaurant) return <Text>Không có dữ liệu</Text>;
 
   return (
-    <View style={RestaurantDetailStyles.container}>
-      <Image source={{ uri: restaurant.image }} style={RestaurantDetailStyles.image} />
-      <Text style={RestaurantDetailStyles.name}>{restaurant.name}</Text>
-      <Text style={RestaurantDetailStyles.address}>{restaurant.address}</Text>
-      <Text style={RestaurantDetailStyles.rating}>⭐ {restaurant.rating}</Text>
-      <FlatList
-        data={restaurant.dishes}
-        keyExtractor={(dish: Dish) => dish.id}
-        renderItem={({ item: dish }) => (
-          <View style={RestaurantDetailStyles.dish}>
-            <Image source={{ uri: dish.image }} style={RestaurantDetailStyles.dishImage} />
-            <Text style={RestaurantDetailStyles.dishName}>{dish.name} - {dish.price}</Text>
+    <ScrollView style={RestaurantDetailStyles.scrollContainer} contentContainerStyle={RestaurantDetailStyles.scrollContent}>
+      <View style={RestaurantDetailStyles.container}>
+        <StatusBar translucent backgroundColor="transparent" />
+        <Image source={{ uri: restaurant.image }} style={RestaurantDetailStyles.image} />
+        <View style={RestaurantDetailStyles.mainContent}>
+          <View style={RestaurantDetailStyles.header}>
+            <View style={{ alignItems: 'center', marginTop: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={RestaurantDetailStyles.titleRestaurant}>{restaurant.name}</Text>
+                <TouchableOpacity>
+                  <Icons name="edit" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                <Text style={RestaurantDetailStyles.addressRestaurant}>{restaurant.address}</Text>
+                <TouchableOpacity>
+                  <Icons name="edit" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        )}
-      />
-    </View>
+          <Tabs tabs={['Overview', 'Menu', 'Reviews']} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 

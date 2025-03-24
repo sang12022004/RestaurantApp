@@ -9,7 +9,7 @@ import RestaurantDetail from '../screens/RestaurantDetail';
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-  Detail: { restaurant: Restaurant };
+  Detail: { restaurantId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
