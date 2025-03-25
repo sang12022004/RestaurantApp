@@ -8,7 +8,12 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
-import Voice, { SpeechResultsEvent, SpeechErrorEvent } from '@react-native-voice/voice';
+import Voice, {
+  SpeechResultsEvent,
+  SpeechErrorEvent
+} from '@react-native-voice/voice';
+
+
 
 interface SpeechToTextProps {
   onTextResult?: (text: string) => void;
@@ -30,10 +35,22 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
 
   useEffect(() => {
     // Khởi tạo Voice
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechEnd = onSpeechEnd;
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = onSpeechError;
+   const setupVoice = async () => {
+       try {
+         // Khởi tạo Voice trước khi đặt listeners
+         await Voice.start('vi-VN');
+         await Voice.stop();
+
+         Voice.onSpeechStart = onSpeechStart;
+         Voice.onSpeechEnd = onSpeechEnd;
+         Voice.onSpeechResults = onSpeechResults;
+         Voice.onSpeechError = onSpeechError;
+       } catch (error) {
+         console.error('Voice initialization error:', error);
+       }
+     };
+
+     setupVoice();
 
      const checkPermission = async () => {
         try {
