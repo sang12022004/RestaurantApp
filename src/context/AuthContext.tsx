@@ -1,25 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
+import { AuthContextType, UserInfo } from '../types/UserInfo';
 
-// Kiểu dữ liệu User
-interface UserInfo {
-  idPerson: string;
-  surname: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  birthdate: string;
-  gender: number;
-}
-
-// Định nghĩa kiểu dữ liệu cho context
-interface AuthContextType {
-  isLoggedIn: boolean;
-  user: UserInfo | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  updateUser: (newData: Partial<UserInfo>) => void; // Hàm mới
-}
 
 // Tạo Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

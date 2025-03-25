@@ -1,0 +1,25 @@
+import { StyleSheet } from 'react-native';
+
+export default StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { backgroundColor: '#007bff', padding: 16, flexDirection: 'row', alignItems: 'center' },
+  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold', marginLeft: 16 },
+  infoContainer: { padding: 16, backgroundColor: '#fff', margin: 8, borderRadius: 8, elevation: 3 },
+  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+  input: { borderWidth: 1, borderColor: '#007bff', borderRadius: 8, padding: 8, marginBottom: 12 },
+  genderContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  birthInput: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#007bff', borderRadius: 8, padding: 8, justifyContent: 'space-between', marginBottom: 16 },
+  dateText: { color: '#333' },
+  saveBtn: { backgroundColor: '#007bff', padding: 12, borderRadius: 8 },
+  saveText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
+  footer: { padding: 16, marginTop: 230 },
+  logoutBtn: { backgroundColor: '#007bff', padding: 12, borderRadius: 8 },
+  logoutText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
+  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 8, width: '80%' },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  modalMessage: { fontSize: 16, marginBottom: 20 },
+  modalButtonContainer: { flexDirection: 'row', justifyContent: 'space-between' },
+  modalButton: { padding: 10, borderRadius: 5, flex: 1, marginHorizontal: 5 },
+  modalButtonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
+});

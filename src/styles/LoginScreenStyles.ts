@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-// Định nghĩa styles
+
 const LoginStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -109,4 +109,5 @@ const LoginStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-  export default LoginStyles;
+
+export default LoginStyles;

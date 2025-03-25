@@ -53,7 +53,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
       <View style={HomeScreenStyles.headerRow}>
         <Text style={HomeScreenStyles.TextTrangChu}>Danh Sách Nhà Hàng</Text>
         <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { username })}>
-          <Icon name="user-circle" size={30} color="#333" />
+          <Icon name="user-circle" size={30} color="#fff" />
         </TouchableOpacity>
       </View>
 
