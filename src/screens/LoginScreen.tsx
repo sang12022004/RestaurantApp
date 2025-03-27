@@ -58,6 +58,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Xác nhận</Text>}
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link}>Chưa có tài khoản? Đăng ký ngay</Text>
+        </TouchableOpacity>
+
       {/* Modal thông báo đăng nhập thất bại */}
       <Modal
         animationType="slide"
@@ -188,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 15 },
 });
 
 export default LoginScreen;
