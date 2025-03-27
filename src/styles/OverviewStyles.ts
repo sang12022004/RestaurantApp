@@ -78,6 +78,10 @@ const Overview = StyleSheet.create({
         justifyContent: "center",
         right: 0,
       },
+      links:{
+        color: "blue", 
+        textDecorationLine: "underline"
+      }
       
   });
 

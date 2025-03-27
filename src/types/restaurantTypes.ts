@@ -11,5 +11,14 @@ export type Dish = {
     image: string;
     rating: number;
     address: string;
-    dishes: Dish[];
+    phone:string;
+    email:string;
+    facebook:string;
+    instagram:string;
+    website:string;
+    monthly:string;
+    budget:string;
+    provider:string;
+    note:string;
+    //dishes: Dish[];
   };
