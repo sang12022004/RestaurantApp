@@ -1,11 +1,40 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { RootStackParamList } from '../navigation/RootNavigator';
+import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
+
+  // Lấy hàm register từ AuthContext
+  const { register } = useAuth();
+
+  // State cho form đăng ký
+  const [fullname, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Trạng thái loading
+  const [loading, setLoading] = useState(false);
+
+  // Xử lý khi nhấn nút đăng ký
+  const handleRegister = async () => {
+    setLoading(true);
+    const success = await register(fullname, email, password, confirmPassword);
+    setLoading(false);
+
+    if (success) {
+      Alert.alert('Thành công', 'Đăng ký thành công! Hãy đăng nhập.', [
+        { text: 'OK', onPress: () => navigation.navigate('Login') },
+      ]);
+    } else {
+      Alert.alert('Lỗi', 'Đăng ký thất bại. Vui lòng thử lại.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -13,13 +42,38 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.formContainer}>
-        <TextInput style={styles.input} placeholder="Full name" />
-        <TextInput style={styles.input} placeholder="Email" />
-        <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-        <TextInput style={styles.input} placeholder="Comfirm password" secureTextEntry />
+        <TextInput style={styles.input} 
+          placeholder="Full name"
+          value={fullname}
+          onChangeText={setFullname}
+        />
+        <TextInput style={styles.input}
+          placeholder="Email" 
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput style={styles.input} 
+          placeholder="Password" 
+          secureTextEntry 
+          value={password}
+          onChangeText={setPassword}
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Đăng ký</Text>
+        />
+        <TextInput style={styles.input} 
+          placeholder="Comfirm password" 
+          secureTextEntry 
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
+          {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Đăng ký</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.goBack()}>

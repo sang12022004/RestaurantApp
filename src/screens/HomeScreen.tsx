@@ -8,7 +8,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { user } = useAuth();
-  const { username } = route.params; // ✅ Nhận dữ liệu từ Login
+  const { email } = route.params; // ✅ Nhận dữ liệu từ Login
   
   // ✅ Check user null phòng trường hợp chưa login
   if (!user) {
@@ -20,9 +20,9 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   }
   return (
     <View style={styles.container}>
-      <Text>Xin chào, {user.surname} {user.lastName}</Text>
+      <Text>Xin chào, {user.fullname}</Text>
       <Text style={styles.title}>Home Screen</Text>
-      <Button title="Profile" onPress={() => navigation.navigate('ProfileScreen', { username })} />
+      <Button title="Profile" onPress={() => navigation.navigate('ProfileScreen', { email })} />
     </View>
   );
 };

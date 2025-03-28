@@ -8,9 +8,9 @@ import RegisterScreen from '../screens/RegisterScreen';
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: { username: string };
+  Home: { email: string };
   Register: undefined;
-  ProfileScreen: { username: string };
+  ProfileScreen: { email: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

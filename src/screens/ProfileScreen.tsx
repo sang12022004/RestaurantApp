@@ -1,37 +1,30 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Modal, Keyboard, Platform } from 'react-native';
-import { RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
 const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false); // Điều khiển hiển thị DatePicker
+  const [showOldPassword, setShowOldPassword] = useState(true);
+  const [showNewPassword, setShowNewPassword] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
 
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
  
-  const { user, logout, updateUser } = useAuth();
-  const today = new Date();
+  const { user, logout } = useAuth();
   // Các state lưu dữ liệu để người dùng chỉnh sửa
-  const [fullName, setFullName] = useState(
-    user ? `${user.surname} ${user.lastName}`.trim() : ''
-  );
-  const [surname, setSurname] = useState(user?.surname || '');
-  const [lastName, setLastName] = useState(user?.lastName || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [gender, setGender] = useState(user?.gender || 0);
+  const [fullName, setFullName] = useState(user?.fullname || '');
   
-  // Chuyển chuỗi birthdate (VD: "1995-10-20") sang đối tượng Date (nếu có)
-  const initialDate = user?.birthdate ? new Date(user.birthdate) : new Date();
-  const [birthdate, setBirthdate] = useState(user?.birthdate || '');
-  const [dateValue, setDateValue] = useState(initialDate);
-
+  const [email, setEmail] = useState(user?.email || '');
+  const [nation, setNation] = useState(user?.nation || '')
     // ẩn phím
     const dismissKeyboard = () => {
       Keyboard.dismiss();
@@ -43,74 +36,50 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
     // 1) Ẩn bàn phím
     dismissKeyboard();
 
-    const parts = fullName.trim().split(' ');
-    const newSurname = parts.shift() || '';         // Phần cuối cùng
-    const newLastName = parts.join(' ');            // Phần còn lại
-
 
     const data = {
-      id: user.idPerson,
-      surname: newSurname,
-      lastName: newLastName,
-      phone,
+      id: user.id,
+      fullName,
+     
       email,
-      gender,
-      birthdate,
-      created_at: "null",
-      updated_at: new Date().toISOString(),
-      status: 1,
     };
 
-    try {
-      const response = await fetch(`http://10.0.2.2/IOT_ConnectMart_API/api/customer/update.php?id=${user.idPerson}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+    // try {
+    //   const response = await fetch(`http://10.0.2.2/IOT_ConnectMart_API/api/customer/update.php?id=${user.idPerson}`, {
+    //     method: 'PUT',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    //   });
 
-      const result = await response.json();
+    //   const result = await response.json();
 
-      if (result.success) {
-        Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-      } else {
-        updateUser({
-          ...user,         // giữ nguyên các trường cũ
-          surname: newSurname,
-          lastName: newLastName,
-          phone,
-          email,
-          gender,
-          birthdate
-        });
-        Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Lỗi', 'Không thể kết nối đến máy chủ!');
-    }
+    //   if (result.success) {
+    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
+    //   } else {
+    //     updateUser({
+    //       ...user,         // giữ nguyên các trường cũ
+    //       surname: newSurname,
+    //       lastName: newLastName,
+    //       phone,
+    //       email,
+    //       gender,
+    //       birthdate
+    //     });
+    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   Alert.alert('Lỗi', 'Không thể kết nối đến máy chủ!');
+    // }
   };
 
   const handleLogout = () => {
     setModalVisible(true);
   };
 
-  // Hàm xử lý khi DatePicker thay đổi giá trị
-  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false); // Ẩn picker khi chọn xong
-    }
-    if (selectedDate) {
-      setDateValue(selectedDate);
-      // Chuyển selectedDate => chuỗi YYYY-MM-DD
-      const year = selectedDate.getFullYear();
-      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(selectedDate.getDate()).padStart(2, '0');
-      const newBirthdate = `${year}-${month}-${day}`;
-      setBirthdate(newBirthdate);
-    }
-  };
+  
   
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
@@ -125,38 +94,13 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
       {/* Thông tin tài khoản */}
       <View style={styles.infoContainer}>
         <Text style={styles.title}>Thông tin khách hàng</Text>
-
+        
         <Text>Họ Tên:</Text>
         <TextInput
           style={styles.input}
           value={fullName}
           onChangeText={setFullName}
         />
-
-        <Text>Giới tính:</Text>
-        <View style={styles.genderContainer}>
-          <RadioButton
-            value="0"
-            status={gender  === 0 ? 'checked' : 'unchecked'}
-            onPress={() => setGender(0)}
-          />
-          <Text>Nam</Text>
-          <RadioButton
-            value="1"
-            status={gender === 1 ? 'checked' : 'unchecked'}
-            onPress={() => setGender(1)}
-          />
-          <Text>Nữ</Text>
-        </View>
-
-        <Text>Số điện thoại:</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={phone}
-          onChangeText={setPhone}
-        />
-
         <Text>Email:</Text>
         <TextInput
           style={styles.input}
@@ -164,32 +108,70 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           value={email}
           onChangeText={setEmail}
         />
+        <Text>Quốc tịch:</Text>
+        <TextInput
+          style={styles.input}
+          value={nation}
+          placeholder='Quốc tịch'
+          onChangeText={setNation}
+        />
 
-        <Text>Ngày sinh:</Text>
-        <View style={styles.birthContainer}>
-        <TouchableOpacity
-          style={styles.birthInput}
-          onPress={() => setShowDatePicker(true)}
-        >
-          <Text style={styles.dateText}>
-            {birthdate ? birthdate : 'Chọn ngày sinh'}
-          </Text>
-          {/* Icon ở bên phải */}
-          <Icon name="calendar-today" size={20} color="#007bff" />
-        </TouchableOpacity>
-        </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            mode="date"
-            display="default"
-            value={today}
-            onChange={onChangeDate}
-          />
-        )}
 
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
           <Text style={styles.saveText}>LƯU THAY ĐỔI</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Đổi mật khẩu */}
+      <View style={styles.infoContainer}>
+        <Text style={styles.title}>Đổi mật khẩu</Text>
+
+        <Text>Mật khẩu cũ:</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputPass}
+            value={oldPassword}
+            placeholder="Mật khẩu cũ"
+            secureTextEntry={showOldPassword}
+            onChangeText={setOldPassword}
+          />
+          <TouchableOpacity style={styles.icon} onPress={() => setShowOldPassword(!showOldPassword)}>
+            <Ionicons name={showOldPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+          </TouchableOpacity>
+        </View>
+
+        <Text>Mật khẩu mới:</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputPass}
+            value={newPassword}
+            placeholder="Mật khẩu mới"
+            secureTextEntry={showNewPassword}
+            onChangeText={setNewPassword}
+          />
+          <TouchableOpacity style={styles.icon} onPress={() => setShowNewPassword(!showNewPassword)}>
+            <Ionicons name={showNewPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+          </TouchableOpacity>
+        </View>
+
+
+        <Text>Xác nhận mật khẩu:</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputPass}
+            value={confirmPassword}
+            placeholder="Xác nhận mật khẩu"
+            secureTextEntry={showConfirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+          <TouchableOpacity style={styles.icon} onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+            <Ionicons name={showConfirmPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+          </TouchableOpacity>
+        </View>
+
+
+        <TouchableOpacity style={styles.saveBtn}>
+          <Text style={styles.saveText}>XÁC NHẬN</Text>
         </TouchableOpacity>
       </View>
 
@@ -239,14 +221,22 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#fff' 
+  },
   header: {
     backgroundColor: '#007bff',
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold', marginLeft: 16 },
+  headerTitle: { 
+    color: '#fff', 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginLeft: 16 
+  },
   infoContainer: {
     padding: 16,
     backgroundColor: '#fff',
@@ -254,7 +244,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
   },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+  title: { 
+    fontSize: 18, 
+    fontWeight: 'bold', 
+    marginBottom: 8 
+  },
   input: {
     borderWidth: 1,
     borderColor: '#007bff',
@@ -267,22 +261,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12 
 },
-  birthContainer: { 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16 
-},
-  birthInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#007bff',
-    borderRadius: 8,
-    padding: 8,
-    marginRight: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   saveBtn: {
     backgroundColor: '#007bff',
     padding: 12,
@@ -296,7 +274,6 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     alignItems: 'center',
-    marginTop: 230
   },
   logoutBtn: {
     backgroundColor: '#007bff',
@@ -351,5 +328,23 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 16,
+  },
+  inputContainer: { 
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    borderColor: "#007bff",
+    position: "relative",
+  },
+  icon: { 
+    position: "absolute", 
+    right: 10 
+  },
+  inputPass: { 
+    flex: 1,
+    paddingVertical: 10,
   },
 });

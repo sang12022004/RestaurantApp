@@ -9,21 +9,32 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { login } = useAuth();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     setLoading(true);
-    const isSuccess = await login(username, password);
-    setLoading(false);
-
-    if (isSuccess) {
-      navigation.replace('Home', { username });
-    } else {
+    try {
+      const isSuccess = await login(email, password);
+      console.log('Đăng nhập thành công, isSuccess:', isSuccess);
+      if (isSuccess) {
+        console.log('Chuyển hướng đến Home');
+        navigation.replace('Home', { email });
+      } else {
+        console.log('Đăng nhập thất bại, hiển thị modal');
+        setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại.');
+        setModalVisible(true);
+      }
+    } catch (error: any) {
+      console.error('Lỗi trong handleLogin:', error.message);
+      setErrorMessage(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
       setModalVisible(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,16 +45,18 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       
       <TextInput
         style={styles.input}
-        placeholder="Tài khoản"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
         placeholderTextColor="#aaa"
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
 
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="Mật khẩu"
+          placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!isPasswordVisible}
