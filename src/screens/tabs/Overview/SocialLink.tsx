@@ -9,7 +9,7 @@ const SocialLinks = () => {
       {["Facebook", "Instagram", "Website"].map((platform, index) => (
         <View key={index} style={OverviewStyle.formRow}>
           <Text style={OverviewStyle.sectionTitle}>{platform}</Text>
-          <TextInput style={OverviewStyle.input} placeholder={`Enter ${platform} link`} mode="outlined" />
+          <TextInput style={OverviewStyle.input} placeholder={`Enter ${platform} link`} mode="outlined" editable={false} />
         </View>
       ))}
     </View>

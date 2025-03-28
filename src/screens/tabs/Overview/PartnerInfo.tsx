@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text,TouchableOpacity } from "react-native";
 import DropdownComponent from '../../../components/Dropdown';
-import Couter from '../../../components/Couter';
+import VisitsCounter from '../componentsTab/VisitsCounter';
 import OverviewStyle from "../../../styles/OverviewStyles";
 import TextPartnerInfo from "../componentsTab/TextPartnerInfo";
 import Icons from "react-native-vector-icons/FontAwesome";
@@ -21,7 +21,7 @@ const PartnerInfo = ({ selectedPC, setSelectedPC, pcList }:any) => {
         </TouchableOpacity>
     </View>
     <View style={OverviewStyle.row}>
-      <Couter />
+      <VisitsCounter />
       <DropdownComponent label="PiC" data={pcList} value={selectedPC} onChange={setSelectedPC} />
 
       <TextPartnerInfo label="Monthly Use" value="200 kg"/>

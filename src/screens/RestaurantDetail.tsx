@@ -1,55 +1,65 @@
 import React, { useState } from 'react';
-import {TouchableOpacity,StatusBar, ScrollView,View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { TouchableOpacity, StatusBar, ScrollView, View, Text, Image } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
-import { Dish } from '../types/restaurantTypes';
+import Icons from 'react-native-vector-icons/FontAwesome';
 import RestaurantDetailStyles from '../styles/RestaurantDetailStyles';
-import Tabs from './tabs/tabs';
-import OverviewContent from './tabs/Overview/Overview';
-import Icons from "react-native-vector-icons/FontAwesome";
+import Tabs from '../components/Tabs';
 import RestaurantTabContent from './tabs/RestaurantTabContent';
+import { useRestaurantDetail } from '../hooks/useRestaureantDetail';
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
 const RestaurantDetail = () => {
   const route = useRoute<DetailScreenRouteProp>();
-  const { restaurant } = route.params;
+  const { restaurantId } = route.params;
+
+  const { restaurant, loading, error } = useRestaurantDetail(restaurantId);
   const [activeTab, setActiveTab] = useState('Overview');
 
-  return (
-    <>
-     <ScrollView style={RestaurantDetailStyles.scrollContainer} contentContainerStyle={RestaurantDetailStyles.scrollContent}>
-    <View style={RestaurantDetailStyles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
-      <Image source={{ uri: restaurant.image }} style={RestaurantDetailStyles.image} />
-      <View style={RestaurantDetailStyles.mainContent}>
-     
-        <View style={RestaurantDetailStyles.header}>
-        <View style={{ alignItems: 'center', marginTop: 1 }}>
-        {/* Tên nhà hàng */}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={RestaurantDetailStyles.titleRestaurant}>{restaurant.name}</Text>
-          <TouchableOpacity >
-            <Icons name="edit" size={25} color="black" />
-          </TouchableOpacity>
-        </View>
+  if (loading) return <Text>Đang tải...</Text>;
+  if (error) return <Text>{error}</Text>;
+  if (!restaurant) return <Text>Không có dữ liệu</Text>;
 
-        {/* Địa chỉ */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-          <Text style={RestaurantDetailStyles.addressRestaurant}>{restaurant.address}</Text>
-          <TouchableOpacity >
-            <Icons name="edit" size={25} color="black" />
-          </TouchableOpacity>
+  return (
+    <ScrollView
+      style={RestaurantDetailStyles.scrollContainer}
+      contentContainerStyle={RestaurantDetailStyles.scrollContent}
+    >
+      {/* Phần đầu giao diện */}
+      <View style={RestaurantDetailStyles.container}>
+        <StatusBar translucent backgroundColor="transparent" />
+        <Image source={{ uri: restaurant.image }} style={RestaurantDetailStyles.image} />
+        <View style={RestaurantDetailStyles.mainContent}>
+          <View style={RestaurantDetailStyles.header}>
+            <View style={{ alignItems: 'center', marginTop: 0 }}>
+              {/* Hiển thị tên nhà hàng */}
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={RestaurantDetailStyles.titleRestaurant}>{restaurant.name}</Text>
+                <TouchableOpacity>
+                  <Icons name="edit" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
+              {/* Hiển thị địa chỉ nhà hàng */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                <Text style={RestaurantDetailStyles.addressRestaurant}>{restaurant.address}</Text>
+                <TouchableOpacity>
+                  <Icons name="edit" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          {/* Tabs hiển thị các phần */}
+          <Tabs
+            tabs={['Overview', 'Menu', 'Reviews']}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+          {/* Nội dung của từng tab */}
+      <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
         </View>
       </View>
-          </View>
-        <Tabs tabs={['Overview', 'Menu', 'Reviews']} activeTab={activeTab} setActiveTab={setActiveTab} />
-          {/* {renderTabContent()} */}
-          <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
-      </View>
-    </View>
     </ScrollView>
-    </>
   );
 };
 

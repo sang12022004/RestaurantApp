@@ -3,6 +3,9 @@ import { Text } from 'react-native';
 import { Restaurant } from '../../types/restaurantTypes';
 import RestaurantDetailStyles from '../../styles/RestaurantDetailStyles';
 import OverviewContent from './Overview/Overview';
+import MenuTab from './Menu/MenuTab';
+
+
 
 interface RestaurantTabContentProps {
   activeTab: string;
@@ -15,13 +18,7 @@ const RestaurantTabContent: React.FC<RestaurantTabContentProps> = ({ activeTab, 
       return <OverviewContent />;
     case 'Menu':
       return (
-        <>
-          {restaurant.dishes.map((menuItem, index) => (
-            <Text key={index} style={RestaurantDetailStyles.text}>
-              {menuItem.name} - {menuItem.price} VND
-            </Text>
-          ))}
-        </>
+          <MenuTab restaurantId={restaurant.id} />
       );
     case 'Reviews':
       return (

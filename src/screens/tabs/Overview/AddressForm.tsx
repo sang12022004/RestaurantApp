@@ -18,6 +18,5 @@ const AddressForm = ({ onPressAction }: { onPressAction: () => void }) => {
       </View>
     );
   };
-  
+
   export default AddressForm;
-  

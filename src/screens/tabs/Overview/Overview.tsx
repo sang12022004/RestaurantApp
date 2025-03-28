@@ -4,12 +4,12 @@ import { Provider as PaperProvider } from "react-native-paper";
 import ContactInfo from './ContactInfo';
 import CategoryList from './Category';
 import AddressForm from './AddressForm';
-import SocialLinks from './SocialLinks';
+import SocialLinks from './SocialLink';
 import PartnerInfo from './PartnerInfo';
 import NotesSection from './NotesSection';
 import DropdownComponent from '../../../components/Dropdown';
 import OverviewStyle from '../../../styles/OverviewStyles';
-import { useOverviewLogic } from '../../../hooks/hooks';
+import { useOverviewLogic } from '../../../hooks/useOverView';
 
 const OverviewContent = () => {
   const {

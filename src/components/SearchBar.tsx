@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import SearchBarStyles from '../styles/SearchBar';
 
 const SearchBar = ({ onSearch }: { onSearch: (text: string) => void }) => {

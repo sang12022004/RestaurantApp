@@ -4,14 +4,14 @@ const CategoryListStyles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
     flexWrap: "wrap",
     borderBottomWidth: 2,
     marginBottom: 20,
   },
-  titleCategories: {
-    flex: 1,
+  categoryTitle: { 
+    fontSize: 15,
     fontWeight: "bold",
+    marginBottom: 10,
   },
   categoryItem: {
     flexDirection: "row",
@@ -27,14 +27,14 @@ const CategoryListStyles = StyleSheet.create({
     fontWeight: "bold",
   },
   addButton: {
-    position: "absolute",
     borderColor: "black",
     width: 30,
     height: 30,
     alignItems: "center",
     justifyContent: "center",
-    right: 0,
   },
+
+  // Modal Styles
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -47,26 +47,41 @@ const CategoryListStyles = StyleSheet.create({
     borderRadius: 10,
     width: 300,
     alignItems: "center",
+
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+   
+  },
+  modalItemsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
   },
   modalItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    width: "100%",
+    paddingVertical: 10,
+    paddingHorizontal: 15, 
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    margin: 5,
+    minWidth: 100,
     alignItems: "center",
+    backgroundColor: "#f8f8f8",
   },
   modalText: {
     fontSize: 16,
   },
   closeButton: {
     marginTop: 10,
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     backgroundColor: "#ff5555",
-    borderRadius: 5,
+    borderRadius: 8,
+    left:100
   },
   closeButtonText: {
     color: "white",

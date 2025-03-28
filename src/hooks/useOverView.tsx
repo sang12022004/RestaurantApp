@@ -3,9 +3,10 @@ import { useState } from "react";
 export const useOverviewLogic = () => {
 
     // Hàm onPress
-  const showAlert = () => {
-    alert("Microphone pressed!");
-  };
+    const showAlert = () => {
+        window.alert("Microphone pressed!");
+      };
+      
 
   // Danh sách danh mục
   const [categories, setCategories] = useState(["Grill", "Hot pot"]);
