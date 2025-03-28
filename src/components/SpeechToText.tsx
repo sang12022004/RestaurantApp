@@ -13,8 +13,6 @@ import Voice, {
   SpeechErrorEvent
 } from '@react-native-voice/voice';
 
-
-
 interface SpeechToTextProps {
   onTextResult?: (text: string) => void;
   placeholder?: string;
@@ -36,21 +34,17 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
   useEffect(() => {
     // Khởi tạo Voice
    const setupVoice = async () => {
-       try {
-         // Khởi tạo Voice trước khi đặt listeners
-         await Voice.start('vi-VN');
-         await Voice.stop();
+          try {
+            Voice.onSpeechStart = onSpeechStart;
+            Voice.onSpeechEnd = onSpeechEnd;
+            Voice.onSpeechResults = onSpeechResults;
+            Voice.onSpeechError = onSpeechError;
+          } catch (error) {
+            console.error('Voice initialization error:', error);
+          }
+        };
 
-         Voice.onSpeechStart = onSpeechStart;
-         Voice.onSpeechEnd = onSpeechEnd;
-         Voice.onSpeechResults = onSpeechResults;
-         Voice.onSpeechError = onSpeechError;
-       } catch (error) {
-         console.error('Voice initialization error:', error);
-       }
-     };
-
-     setupVoice();
+        setupVoice();
 
      const checkPermission = async () => {
         try {
@@ -122,18 +116,21 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({
     setIsLoading(true);
 
     try {
-      await Voice.start('vi-VN');
+      const hasPermission = await requestMicrophonePermission();
+            if (!hasPermission) {
+              setError('Không có quyền truy cập microphone');
+              setIsLoading(false);
+              return;
+            }
+
+            await Voice.start('vi-VN');
+
     } catch (error) {
       console.error('Voice start error:', error);
 
       if (error.message && error.message.includes('null')) {
         setError('Thư viện Voice chưa được khởi tạo đúng cách.');
-      } else if (error.message && error.message.includes('permission')) {
-        const hasPermission = await requestMicrophonePermission();
-        if (!hasPermission) {
-          setError('Không có quyền truy cập microphone.');
-        }
-      } else {
+      }else {
         setError('Không thể khởi động nhận dạng giọng nói.');
       }
       setIsLoading(false);
