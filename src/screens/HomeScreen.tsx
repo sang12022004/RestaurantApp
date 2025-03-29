@@ -14,7 +14,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { logout } = useAuth();
-  const { username } = route.params; // Nhận dữ liệu từ Login
+  const { email } = route.params; // Nhận dữ liệu từ Login
   const { restaurants, loading, error } = useRestaurants();
   const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(restaurants);
   const { height } = Dimensions.get('window');
@@ -52,7 +52,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
         
       <View style={HomeScreenStyles.headerRow}>
         <Text style={HomeScreenStyles.TextTrangChu}>Danh Sách Nhà Hàng</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { username })}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { email })}>
           <Icon name="user-circle" size={30} color="#fff" />
         </TouchableOpacity>
       </View>
