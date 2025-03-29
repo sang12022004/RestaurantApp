@@ -1,39 +1,10 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { AuthContextType, User } from '../types/user';
 
 // Cấu hình URL API
 const API_BASE_URL = 'http://10.0.2.2:8080/api/v1';
-
-// Interface cho User
-export interface User {
-  id: string;
-  deleted: boolean;
-  created_at: Date;
-  updated_at: Date;
-  fullname: string;
-  email: string;
-  password: string;
-  role: 'admin' | 'sales';
-  avatar: string | null;
-  nation: string | null;
-  refresh_token: string | null;
-  refresh_token_exp: Date | null;
-}
-
-// Kiểu dữ liệu cho AuthContext
-interface AuthContextType {
-  user: User | null;
-  isLoggedIn: boolean;
-  register: (
-    fullname: string,
-    email: string,
-    password: string,
-    confirmPassword: string
-  ) => Promise<boolean>;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-}
 
 // Tạo Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,11 +31,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        
         return true;
       }
       throw new Error(response.data.message || 'Đăng ký thất bại');
-    
   };
 
   /**
@@ -72,15 +41,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      
       const signInResponse = await axios.post(`${API_BASE_URL}/auth/sign-in`, {
         email: email.trim(),
         password: password.trim(),
       });
 
-      
-
-      // Kiểm tra HTTP status và statusCode để xác định thành công
       if (
         signInResponse.status === 200 &&
         signInResponse.data.statusCode === 'S2000'
@@ -89,19 +54,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           signInResponse.data.message || 'Email hoặc mật khẩu không đúng'
         );
       } else {
-        
-        
         const tokenData = signInResponse.data.data;
-
-
         // Giải mã accessToken để lấy thông tin user
         let decodedToken: { id?: string; fullName?: string; email?: string };
         
-          decodedToken = jwtDecode(tokenData.accessToken);
-          if (!decodedToken.id) {
-            throw new Error('Không thể lấy ID người dùng từ token');
-          }
-        
+        decodedToken = jwtDecode(tokenData.accessToken);
+        if (!decodedToken.id) {
+           throw new Error('Không thể lấy ID người dùng từ token');
+        }
 
         const userId = decodedToken.id;
         const fallbackUser: User = {
@@ -126,7 +86,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Gọi API /users/{id} để lấy thông tin chi tiết user
         try {
-         
           const userResponse = await axios.get(`${API_BASE_URL}/users/${userId}`, {
             headers: {
               Authorization: `Bearer ${tokenData.accessToken}`,
@@ -134,8 +93,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           const userObj = userResponse.data.data?.data;
-          
-
           // Cập nhật thông tin user từ API /users/{id}
           const fetchedUser: User = {
             id: userObj.id || userId,
@@ -158,17 +115,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           };
 
           setUser(fetchedUser);
-         
-        } catch (error: any) {
-         
-          setUser(fallbackUser);
-     
         }
-
+        catch (error: any) {
+          setUser(fallbackUser);
+        }
         setIsLoggedIn(true);
         return true;
       }
-    } catch (error: any) {
+    }
+    catch (error: any) {
       throw new Error(
         error.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại.'
       );

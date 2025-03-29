@@ -91,7 +91,7 @@ const LoginStyles = StyleSheet.create({
     marginBottom: 10,
   },
   modalMessage: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 20,
     textAlign: 'left',
   },
@@ -108,6 +108,7 @@ const LoginStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  link: { color: '#007bff', textAlign: 'center', marginTop: 15 },
 });
 
 export default LoginStyles;
