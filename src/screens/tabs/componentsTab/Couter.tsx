@@ -13,10 +13,10 @@ const Counter = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => setCount(count + 1)}>
-          <FontAwesome name="caret-up" size={26} color="#000" />
+          <FontAwesome name="caret-up" size={20} color="#000" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => setCount(count - 1)}>
-          <FontAwesome name="caret-down" size={26} color="#000" />
+          <FontAwesome name="caret-down" size={20} color="#000" />
         </TouchableOpacity>
       </View>
     </View>
@@ -27,9 +27,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-   marginTop:10,
-   marginBottom:10,
-   marginRight: 20
+    marginVertical: 10,
+    marginRight: 20,
   },
   label: {
     fontSize: 16,
@@ -37,9 +36,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   box: {
-    width: 60,
-    height: 60,
-    borderWidth: 2,
+    width: 40,
+    height: 40,
+    borderWidth: 1.5,
     borderColor: "#333",
     justifyContent: "center",
     alignItems: "center",
@@ -52,11 +51,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "column",
+    alignItems: "center",
   },
   button: {
-    width: 30,
-    height: 30,
-    borderWidth: 2,
+    width: 20,
+    height: 20,
+    borderWidth: 1.5,
     borderColor: "#333",
     justifyContent: "center",
     alignItems: "center",

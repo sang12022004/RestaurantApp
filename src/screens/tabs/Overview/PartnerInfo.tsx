@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text,TouchableOpacity } from "react-native";
 import DropdownComponent from '../../../components/Dropdown';
-import Couter from '../../../components/Couter';
+import Couter from '../componentsTab/Couter';
 import OverviewStyle from "../../../styles/OverviewStyles";
 import TextPartnerInfo from "../componentsTab/TextPartnerInfo";
 import Icons from "react-native-vector-icons/FontAwesome";

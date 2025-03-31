@@ -9,7 +9,7 @@ import PartnerInfo from './PartnerInfo';
 import NotesSection from './NotesSection';
 import DropdownComponent from '../../../components/Dropdown';
 import OverviewStyle from '../../../styles/OverviewStyles';
-import { useOverviewLogic } from '../../../hooks/hooks';
+import { useOverviewLogic } from '../../../hooks/useOverview';
 
 const OverviewContent = () => {
   const {
