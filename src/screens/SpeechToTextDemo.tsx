@@ -52,6 +52,7 @@ const SpeechToTextDemo = () => {
               value={currentNote}
               onChangeText={setCurrentNote}
               placeholder="Ghi chú của bạn"
+              placeholderTextColor="black"
               multiline
             />
             <TouchableOpacity style={styles.saveButton} onPress={saveNote}>
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#000',
   },
   section: {
     padding: 16,
@@ -100,36 +102,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
+    color: '#000',
   },
   speechComponent: {
     backgroundColor: '#e8f5e9',
+    color: '#000',
   },
   hookContainer: {
     backgroundColor: '#e3f2fd',
     padding: 16,
     borderRadius: 8,
+    color: '#000',
   },
   resultText: {
     fontSize: 16,
     marginBottom: 16,
     minHeight: 50,
+    color: '#000',
   },
   hookButton: {
     backgroundColor: '#2196F3',
     padding: 12,
     borderRadius: 24,
     alignItems: 'center',
+    color: '#000',
   },
   listeningButton: {
     backgroundColor: '#F44336',
+    color: '#000',
   },
   buttonText: {
-    color: 'white',
+    color: '#000',
     fontWeight: 'bold',
+
   },
   noteInputContainer: {
     flexDirection: 'row',
     marginBottom: 16,
+    color: '#000',
   },
   noteInput: {
     flex: 1,
@@ -139,6 +149,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 8,
     minHeight: 80,
+    color: '#000',
   },
   saveButton: {
     backgroundColor: '#4CAF50',
@@ -146,6 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     borderRadius: 8,
+    color: '#000',
   },
   notesContainer: {
     marginTop: 16,
@@ -154,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: '#000',
   },
   emptyText: {
     fontStyle: 'italic',
@@ -166,9 +179,11 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
+    color: '#000',
   },
   noteText: {
     fontSize: 14,
+    color: '#000',
   },
 });
 
