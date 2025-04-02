@@ -9,78 +9,77 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
 const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
+  const { user, updateUser, changePassword, logout } = useAuth();
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showOldPassword, setShowOldPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [showConfirmPassword, setShowConfirmPassword] = useState(true);
 
+  // Các state lưu dữ liệu để người dùng chỉnh sửa
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
  
-  const { user, logout } = useAuth();
   // Các state lưu dữ liệu để người dùng chỉnh sửa
   const [fullName, setFullName] = useState(user?.fullname || '');
-  
   const [email, setEmail] = useState(user?.email || '');
-  const [nation, setNation] = useState(user?.nation || '')
-    // ẩn phím
-    const dismissKeyboard = () => {
-      Keyboard.dismiss();
-    };
+  const [nation, setNation] = useState(user?.nation || '');
+
+  // ẩn phím
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   const handleSave = async () => {
     if (!user) return;
-
-    // 1) Ẩn bàn phím
+    //Ẩn bàn phím
     dismissKeyboard();
-
-
     const data = {
       id: user.id,
-      fullName,
-     
-      email,
+      fullname: fullName.trim(),
+      email: email.trim(),
+      nation: nation.trim(),
     };
+    const success = await updateUser(data);
+    if (!success) {
+      Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
+    } else {
+      Alert.alert('Lỗi', 'Cập nhật thông tin thất bại, vui lòng thử lại!');
+    }
+  };
 
-    // try {
-    //   const response = await fetch(`http://10.0.2.2/IOT_ConnectMart_API/api/customer/update.php?id=${user.idPerson}`, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   });
+  // Đổi mật khẩu
+  const handleChangePassword = async () => {
+    dismissKeyboard();
 
-    //   const result = await response.json();
+    // Kiểm tra dữ liệu
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đủ 3 trường mật khẩu cũ, mới và xác nhận!');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Lỗi', 'Mật khẩu mới và xác nhận mật khẩu không khớp!');
+      return;
+    }
 
-    //   if (result.success) {
-    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-    //   } else {
-    //     updateUser({
-    //       ...user,         // giữ nguyên các trường cũ
-    //       surname: newSurname,
-    //       lastName: newLastName,
-    //       phone,
-    //       email,
-    //       gender,
-    //       birthdate
-    //     });
-    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   Alert.alert('Lỗi', 'Không thể kết nối đến máy chủ!');
-    // }
+    const success = await changePassword(oldPassword.trim(), newPassword.trim());
+    if (success) {
+      Alert.alert('Thành công', 'Mật khẩu đã được thay đổi!');
+      // Xoá trường input
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } else {
+      Alert.alert('Lỗi', 'Đổi mật khẩu thất bại, vui lòng thử lại!');
+    }
   };
 
   const handleLogout = () => {
     setModalVisible(true);
   };
 
-  
-  
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       {/* Header */}
@@ -170,7 +169,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
         </View>
 
 
-        <TouchableOpacity style={styles.saveBtn}>
+        <TouchableOpacity style={styles.saveBtn} onPress={handleChangePassword}>
           <Text style={styles.saveText}>XÁC NHẬN</Text>
         </TouchableOpacity>
       </View>
@@ -181,39 +180,42 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           <Text style={styles.logoutText}>ĐĂNG XUẤT</Text>
         </TouchableOpacity>
       </View>
+
+
+      {/* Thông báo đăng xuất */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
+          <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Đăng xuất</Text>
             <Text style={styles.modalMessage}>Bạn có chắc chắn muốn đăng xuất?</Text>
             <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#ccc' }]}
-                onPress={() => setModalVisible(false)}
-                >
-                <Text style={styles.modalButtonText}>Hủy</Text>
+                  style={[styles.modalButton, { backgroundColor: '#ccc' }]}
+                  onPress={() => setModalVisible(false)}
+                  >
+                  <Text style={styles.modalButtonText}>Hủy</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#007bff' }]}
-                onPress={() => {
+                  style={[styles.modalButton, { backgroundColor: '#007bff' }]}
+                  onPress={() => {
                     setModalVisible(false);
                     logout();
                     navigation.reset({
                       index: 0,
                       routes: [{ name: 'Login' }],
                     });
-                }}
-                >
-                <Text style={styles.modalButtonText}>Đăng xuất</Text>
-                </TouchableOpacity>
+                  }}
+                  >
+                  <Text style={styles.modalButtonText}>Đăng xuất</Text>
+              </TouchableOpacity>
             </View>
-            </View>
+          </View>
         </View>
-        </Modal>
+      </Modal>
     </ScrollView>
   );
 };

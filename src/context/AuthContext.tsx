@@ -32,6 +32,8 @@ interface AuthContextType {
     confirmPassword: string
   ) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
+  updateUser: (newData: Partial<User>) => Promise<boolean>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -210,6 +212,82 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+
+  const updateUser = async (newData: Partial<User>): Promise<boolean> => {
+    if (!user) {
+      return false;
+    }
+    try {
+      const response = await axios.put(`${API_BASE_URL}/users/${user.id}`, newData, {
+        // Nếu cần, thêm header Authorization: Bearer token
+      });
+      if (response.status === 200 && response.data.statusCode === 'S2000') {
+        // Giả sử dữ liệu user mới nằm trong response.data.data
+        // Nếu backend lồng thêm một cấp, thay đổi thành response.data.data.data
+        const updatedUser = response.data.data;
+
+        setUser({
+          id: updatedUser.id,
+          deleted: updatedUser.deleted || false,
+          created_at: new Date(updatedUser.createdAt || Date.now()),
+          updated_at: new Date(updatedUser.updatedAt || Date.now()),
+          fullname: updatedUser.fullname,
+          email: updatedUser.email,
+          password: '', // Không lưu mật khẩu
+          role: updatedUser.role || 'sales',
+          avatar: updatedUser.avatar || null,
+          nation: updatedUser.nation || null,
+          refresh_token: updatedUser.refreshToken || null,
+          refresh_token_exp: updatedUser.refreshTokenExp ? new Date(updatedUser.refreshTokenExp) : null,
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+
+  /**
+   * Hàm đổi mật khẩu
+   * Gửi PUT /users/change-password/{id} với body { currentPassword, newPassword }
+   * Nếu thành công (statusCode === 'S2000'), trả về true, ngược lại false
+   */
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ): Promise<boolean> => {
+    if (!user) {
+      console.error('Không có user để đổi mật khẩu');
+      return false;
+    }
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/users/change-password/${user.id}`,
+        {
+          currentPassword,
+          newPassword,
+        }
+      );
+      if (
+        response.status === 200 &&
+        response.data.statusCode === 'S2000'
+      ) {
+        console.log('Password changed successfully');
+        return true;
+      } else {
+        console.error('Change password failed:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+    }
+    return false;
+  };
+
+
+
   /**
    * Hàm logout: Xóa thông tin người dùng và cập nhật trạng thái
    */
@@ -219,7 +297,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, register, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, register, login, updateUser, changePassword, logout }}>
       {children}
     </AuthContext.Provider>
   );
