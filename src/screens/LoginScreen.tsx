@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
@@ -20,17 +29,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(true);
     try {
       const isSuccess = await login(email, password);
-      console.log('Đăng nhập thành công, isSuccess:', isSuccess);
       if (isSuccess) {
-        console.log('Chuyển hướng đến Home');
         navigation.replace('Home', { email });
       } else {
-        console.log('Đăng nhập thất bại, hiển thị modal');
         setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại.');
         setModalVisible(true);
       }
     } catch (error: any) {
-      console.error('Lỗi trong handleLogin:', error.message);
       setErrorMessage(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
       setModalVisible(true);
     } finally {
@@ -40,12 +45,22 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBackground} />
-      <Text style={styles.title}>Đăng nhập</Text>
-      
+      {/* Header logo kết hợp chữ */}
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../assets/logo.png')}
+          style={styles.logoImage}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.mainText}>PNP</Text>
+          <Text style={styles.subText}>Global Supply</Text>
+        </View>
+      </View>
+
+      {/* Ô nhập username */}
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="username..."
         value={email}
         onChangeText={setEmail}
         placeholderTextColor="#aaa"
@@ -53,27 +68,60 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         autoCapitalize="none"
       />
 
+      {/* Ô nhập password có ẩn/hiện */}
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="Password"
+          placeholder="**********"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!isPasswordVisible}
           placeholderTextColor="#aaa"
         />
-        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconContainer}>
-          <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={24} color="#aaa" />
+        <TouchableOpacity
+          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+          style={styles.iconContainer}
+        >
+          <Ionicons
+            name={isPasswordVisible ? 'eye' : 'eye-off'}
+            size={24}
+            color="#aaa"
+          />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Xác nhận</Text>}
+      {/* Nút đăng nhập */}
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.loginButtonText}>ĐĂNG NHẬP</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.link}>Chưa có tài khoản? Đăng ký ngay</Text>
-        </TouchableOpacity>
+      {/* Link quên mật khẩu */}
+      <TouchableOpacity
+        style={styles.forgotPassword}
+        onPress={() => {
+          navigation.navigate('ForgotPassword');
+        }}
+      >
+        <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+      </TouchableOpacity>
+
+      {/* Link đăng ký tài khoản */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
+        style={styles.registerContainer}
+      >
+        <Text style={styles.registerText}>
+          Chưa có tài khoản? <Text style={styles.registerTextHighlight}>Đăng ký</Text>
+        </Text>
+      </TouchableOpacity>
 
       {/* Modal thông báo đăng nhập thất bại */}
       <Modal
@@ -85,8 +133,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Đăng nhập thất bại</Text>
-            <Text style={styles.modalMessage}>Tài khoản hoặc mật khẩu không chính xác!</Text>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalMessage}>
+              {errorMessage || 'Tài khoản hoặc mật khẩu không chính xác!'}
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
               <Text style={styles.modalButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
@@ -100,50 +153,52 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#2C5272', // Màu nền chính
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
-  topBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '60%',
-    backgroundColor: '#007bff',
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 100,
   },
-  title: {
+  logoImage: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    marginLeft: 10,
+    height: 60,
+    justifyContent: 'space-between',
+  },
+  mainText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 30,
-    zIndex: 1,
+    color: '#FFF',
+  },
+  subText: {
+    fontSize: 16,
+    color: '#FFF',
   },
   input: {
     width: '90%',
-    height: 60,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
+    height: 50,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
-    marginBottom: 15,
     fontSize: 16,
-    zIndex: 1,
+    marginBottom: 15,
   },
   passwordContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     width: '90%',
-    height: 60,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    backgroundColor: '#fff',
+    height: 50,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
     marginBottom: 15,
+    alignItems: 'center',
     paddingHorizontal: 15,
   },
   passwordInput: {
@@ -152,32 +207,50 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   iconContainer: {
-    padding: 10,
+    paddingLeft: 8,
   },
-  button: {
+  loginButton: {
     width: '90%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#FFA500',
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    marginTop: 10,
-    zIndex: 1,
+    marginTop: 5,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
+  loginButtonText: {
+    color: '#FFF',
+    fontSize: 20,
     fontWeight: 'bold',
+  },
+  forgotPassword: {
+    marginTop: 15,
+  },
+  forgotPasswordText: {
+    color: '#FFF',
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
+  registerContainer: {
+    marginTop: 20,
+  },
+  registerText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  registerTextHighlight: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
   modalContainer: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     padding: 20,
     borderRadius: 10,
     alignItems: 'flex-start',
@@ -195,17 +268,16 @@ const styles = StyleSheet.create({
   modalButton: {
     width: '100%',
     height: 40,
-    backgroundColor: '#007bff',
+    backgroundColor: '#4B2C72',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
   },
   modalButtonText: {
-    color: '#fff',
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  link: { color: '#007bff', textAlign: 'center', marginTop: 15 },
 });
 
 export default LoginScreen;
