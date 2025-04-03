@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Tạo một  axios
 const apiClient = axios.create({
-  baseURL: 'https://67e2715d97fc65f535361af7.mockapi.io/api/tabs/Menu_Restaurent',
+  baseURL: 'https://67241832493fac3cf24d1d33.mockapi.io/0306221306/VanNamCao/menu',
   headers: {
     'Content-Type': 'application/json',
   },

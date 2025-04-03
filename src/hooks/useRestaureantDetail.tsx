@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Restaurant } from "../types/restaurantTypes";
 
-const API_URL = "https://67241832493fac3cf24d1d33.mockapi.io/0306221306/VanNamCao/restaurantlist";
+const API_URL = "http://10.0.2.2:8080/api/v1/restaurants";
 
 export const useRestaurantDetail = (id: string) => {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
@@ -14,10 +14,40 @@ export const useRestaurantDetail = (id: string) => {
 
     axios.get(`${API_URL}/${id}`)
       .then((response) => {
-        setRestaurant(response.data);
+        if (response.data && response.data.statusCode === "S2000") {
+          const rawData = response.data.data.data; // Lấy dữ liệu thực tế từ API
+
+          const formattedData: Restaurant = {
+            id: rawData.id,
+            name: rawData.name,
+            code: rawData.code,
+            phone: rawData.phone,
+            email: rawData.email,
+            open_time: rawData.open_time,
+            close_time: rawData.close_time,
+            lowest_avg_cost: rawData.lowest_avg_cost,
+            highest_avg_cost: rawData.highest_avg_cost,
+            categories: rawData.categories,
+            facebook: rawData.facebook || "",
+            instagram: rawData.instagram || "",
+            website: rawData.website || "",
+            note: rawData.note || "",
+            is_verified: rawData.is_verified,
+            address: rawData.address || "Chưa cập nhật",
+            partnership: rawData.partnership || null,
+            createdAt: rawData.createdAt,
+            updatedAt: rawData.updatedAt,
+            image: rawData.image || "https://via.placeholder.com/150", 
+            rating: rawData.is_verified ? 5 : 4, // Giả sử nếu verified thì 5 sao
+          };
+
+          setRestaurant(formattedData);
+        } else {
+          setError("Không thể tải thông tin nhà hàng.");
+        }
       })
       .catch((err) => {
-        setError("Không thể tải thông tin nhà hàng.");
+        setError("Lỗi khi fetch chi tiết nhà hàng.");
         console.error("Lỗi khi fetch chi tiết nhà hàng:", err);
       })
       .finally(() => {

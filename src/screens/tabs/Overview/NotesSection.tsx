@@ -1,10 +1,21 @@
-import React from "react";
+import React,{useState} from "react";
 import { View, Text,TouchableOpacity } from "react-native";
 import OverviewStyle from "../../../styles/OverviewStyles";
 import { TextInput } from "react-native-gesture-handler";
 import Icons from "react-native-vector-icons/FontAwesome";
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { RootStackParamList } from '../../../navigation/RootNavigator';
+import { useRestaurantDetail } from '../../../hooks/useRestaureantDetail';
+
+type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
 const NotesSection = () => {
+
+  const route = useRoute<DetailScreenRouteProp>();
+      const { restaurantId } = route.params;
+    
+      const { restaurant, loading, error } = useRestaurantDetail(restaurantId);
+      const [activeTab, setActiveTab] = useState('Overview');
   return (
 
   <View style={OverviewStyle.section}>
@@ -15,7 +26,7 @@ const NotesSection = () => {
   </TouchableOpacity>
   </View>
       <TextInput style={OverviewStyle.note} multiline={true}>
-        Có khả năng sẽ giảm lượng than tiêu thụ kể từ sau Tết, do tình hình kinh doanh không ổn định.
+        {restaurant?.note}
       </TextInput>
     </View>
   );

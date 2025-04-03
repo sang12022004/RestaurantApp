@@ -8,6 +8,7 @@ const HomeScreenStyles = StyleSheet.create({
     backgroundColor: 'transparent', // Để nền xanh phía sau lộ ra
     marginTop: -height * 0, // Đẩy nội dung lên trên
     padding:10,
+    paddingTop:30
   },
   headerBackground: {
     position: 'absolute',

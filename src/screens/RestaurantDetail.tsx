@@ -7,6 +7,8 @@ import RestaurantDetailStyles from '../styles/RestaurantDetailStyles';
 import Tabs from './tabs/tabs';
 import RestaurantTabContent from './tabs/RestaurantTabContent';
 import { useRestaurantDetail } from '../hooks/useRestaureantDetail';
+import StatusInfo from '../components/StatusInfo';
+import { formatTime, formatCurrency } from "../utils/format";
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
@@ -42,6 +44,11 @@ const RestaurantDetail = () => {
                 </TouchableOpacity>
               </View>
             </View>
+          </View>
+          <View style={RestaurantDetailStyles.StatusInfo}>
+            <StatusInfo icon="clock-o" text={`${formatTime(restaurant.open_time)} - ${formatTime(restaurant.close_time)}`}/>
+            <StatusInfo icon="tag" text={`${formatCurrency(restaurant.lowest_avg_cost)} - ${formatCurrency(restaurant.highest_avg_cost)}`} />
+            <StatusInfo icon="handshake-o" text="Partnered" />
           </View>
           <Tabs tabs={['Overview', 'Menu', 'Reviews']} activeTab={activeTab} setActiveTab={setActiveTab} />
           <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />

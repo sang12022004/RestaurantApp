@@ -27,7 +27,7 @@ const MenuTab = ({ restaurantId }: { restaurantId: string }) => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://67e2715d97fc65f535361af7.mockapi.io/api/tabs/Menu_Restaurent?id=${restaurantId}`
+          `https://67241832493fac3cf24d1d33.mockapi.io/0306221306/VanNamCao/menu?id=${restaurantId}`
         );
         setMenu(response.data[0]?.menu || null); // Lấy menu từ dữ liệu API
       } catch (err) {
