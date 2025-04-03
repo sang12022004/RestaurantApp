@@ -66,7 +66,22 @@ const HomeScreenStyles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
-  
+  fab: {
+    position: "absolute",
+    right: 20,
+    bottom: 20,
+    backgroundColor: "#33CCFF",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5, // Tạo hiệu ứng nổi trên Android
+  }
 });
 
 export default HomeScreenStyles;

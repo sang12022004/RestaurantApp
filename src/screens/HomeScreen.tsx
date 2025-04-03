@@ -7,8 +7,8 @@ import HomeScreenStyles from '../styles/HomeScreenStyles';
 import SearchBar from '../components/SearchBar';
 import { useRestaurants, Restaurant } from '../hooks/useRestaurants';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -20,6 +20,10 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { height } = Dimensions.get('window');
 
   // Cập nhật filteredRestaurants khi dữ liệu từ API thay đổi
+  useEffect(() => {
+    setFilteredRestaurants(restaurants);
+  }, [restaurants]);
+
   useEffect(() => {
     setFilteredRestaurants(restaurants);
   }, [restaurants]);
@@ -85,6 +89,14 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
             )}
           />
         )}
+
+      <TouchableOpacity
+        style={HomeScreenStyles.fab}
+        onPress={() => navigation.navigate('AddRestaurant', { rawData: null })}
+      >
+        <Icon name="plus" size={24} color="white" />
+      </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
