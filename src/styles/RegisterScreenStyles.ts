@@ -3,14 +3,35 @@ import { StyleSheet } from 'react-native';
 const RegisterStyles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#ffffff' 
+    backgroundColor: '#2C5272' 
   },
-  topContainer: { 
-    backgroundColor: '#007bff', 
-    padding: 40, 
-    borderBottomLeftRadius: 50, 
-    borderBottomRightRadius: 50, 
-    alignItems: 'center' 
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: '#2C5272',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    marginLeft: 10,
+    height: 60, 
+    justifyContent: 'space-between',
+  },
+  mainText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  subText: {
+    fontSize: 16,
+    color: '#FFF',
   },
   title: { 
     fontSize: 24, 
@@ -30,7 +51,7 @@ const RegisterStyles = StyleSheet.create({
     borderRadius: 10 
   },
   button: { 
-    backgroundColor: '#007bff', 
+    backgroundColor: '#FFA500', 
     padding: 15, 
     borderRadius: 10, 
     alignItems: 'center', 
@@ -42,9 +63,14 @@ const RegisterStyles = StyleSheet.create({
       fontWeight: 'bold' 
     },
     link: { 
-      color: '#007bff', 
+      color: '#FFF', 
       textAlign: 'center', 
-      marginTop: 15 
+      marginTop: 15,
+      fontSize: 16
+    },
+    loginTextHighlight: {
+      fontWeight: 'bold',
+      textDecorationLine: 'underline',
     },
     inputPass: { 
       flex: 1, 
@@ -91,7 +117,7 @@ const RegisterStyles = StyleSheet.create({
       lineHeight: 20,
     },
     successButton: {
-      backgroundColor: '#007bff',
+      backgroundColor: '#FFA500',
       padding: 12,
       borderRadius: 8,
       width: '100%',
@@ -127,7 +153,7 @@ const RegisterStyles = StyleSheet.create({
       lineHeight: 20,
     },
     errorButton: {
-      backgroundColor: '#007bff',
+      backgroundColor: '#FFA500',
       padding: 12,
       borderRadius: 8,
       width: '100%',

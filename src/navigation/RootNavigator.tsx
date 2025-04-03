@@ -7,10 +7,12 @@ import RestaurantDetail from '../screens/RestaurantDetail';
 import ProfileScreen from '../screens/ProfileScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AddRestaurantScreen from '../screens/AddRestaurantScreen';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
   Home: { email: string;refresh?: boolean };
   Detail: { restaurantId: string };
   ProfileScreen: { email: string };
@@ -25,6 +27,7 @@ const RootNavigator = () => {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Detail" component={RestaurantDetail} options={{ title: 'Chi tiết nhà hàng' }} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />

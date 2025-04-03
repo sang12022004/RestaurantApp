@@ -1,28 +1,30 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Modal, Keyboard, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomAlertModal from '../components/CustomAlertModal';
 import ProfileStyles from '../styles/ProfileScreenStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
 const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
+  const { user, updateUser, changePassword, logout } = useAuth();
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
-
   const [showOldPassword, setShowOldPassword] = useState(true);
   const [showNewPassword, setShowNewPassword] = useState(true);
   const [showConfirmPassword, setShowConfirmPassword] = useState(true);
 
+  // Các state lưu dữ liệu để người dùng chỉnh sửa
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
  
-  const { user, logout } = useAuth();
-
   // Các state lưu dữ liệu để người dùng chỉnh sửa
   const [fullName, setFullName] = useState(user?.fullname || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -35,49 +37,60 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
 
   const handleSave = async () => {
     if (!user) return;
-
-    // 1) Ẩn bàn phím
+    //Ẩn bàn phím
     dismissKeyboard();
-
     const data = {
       id: user.id,
-      fullName,
-      email,
+      fullname: fullName.trim(),
+      email: email.trim(),
+      nation: nation.trim(),
     };
-
-    // try {
-    //   const response = await fetch(`http://10.0.2.2/IOT_ConnectMart_API/api/customer/update.php?id=${user.idPerson}`, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   });
-
-    //   const result = await response.json();
-
-    //   if (result.success) {
-    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-    //   } else {
-    //     updateUser({
-    //       ...user,         // giữ nguyên các trường cũ
-    //       surname: newSurname,
-    //       lastName: newLastName,
-    //       phone,
-    //       email,
-    //       gender,
-    //       birthdate
-    //     });
-    //     Alert.alert('Thành công', 'Thông tin đã được cập nhật!');
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   Alert.alert('Lỗi', 'Không thể kết nối đến máy chủ!');
-    // }
+    const success = await updateUser(data);
+    if (!success) {
+      setAlertTitle('Thành công');
+      setAlertMessage('Thông tin đã được cập nhật!');
+    } else {
+      setAlertTitle('Lỗi');
+      setAlertMessage('Cập nhật thông tin thất bại, vui lòng thử lại!');
+    }
+    setModalVisible(true);
   };
 
-  //logout
+  // Đổi mật khẩu
+  const handleChangePassword = async () => {
+    dismissKeyboard();
+
+    // Kiểm tra dữ liệu
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setAlertTitle('Lỗi');
+      setAlertMessage('Vui lòng nhập đầy đủ thông tin!');
+      setModalVisible(true);
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setAlertTitle('Lỗi');
+      setAlertMessage('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+      setModalVisible(true);
+      return;
+    }
+
+    const success = await changePassword(oldPassword.trim(), newPassword.trim());
+    if (success) {
+      setAlertTitle('Thành công');
+      setAlertMessage('Mật khẩu đã được thay đổi!');
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } else {
+      setAlertTitle('Lỗi');
+      setAlertMessage('Đổi mật khẩu thất bại, vui lòng thử lại!');
+    }
+    setModalVisible(true);
+  };
+
   const handleLogout = () => {
+    setAlertTitle('Đăng xuất');
+    setAlertMessage('Bạn có chắc chắn muốn đăng xuất không?');
     setModalVisible(true);
   };
 
@@ -116,6 +129,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           onChangeText={setNation}
         />
 
+
         <TouchableOpacity style={ProfileStyles.saveBtn} onPress={handleSave}>
           <Text style={ProfileStyles.saveText}>LƯU THAY ĐỔI</Text>
         </TouchableOpacity>
@@ -135,7 +149,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
             onChangeText={setOldPassword}
           />
           <TouchableOpacity style={ProfileStyles.icon} onPress={() => setShowOldPassword(!showOldPassword)}>
-            <Ionicons name={showOldPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+            <Ionicons name={showOldPassword ? "eye-off" : "eye"} size={20} color="#FFA500" />
           </TouchableOpacity>
         </View>
 
@@ -149,7 +163,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
             onChangeText={setNewPassword}
           />
           <TouchableOpacity style={ProfileStyles.icon} onPress={() => setShowNewPassword(!showNewPassword)}>
-            <Ionicons name={showNewPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+            <Ionicons name={showNewPassword ? "eye-off" : "eye"} size={20} color="#FFA500" />
           </TouchableOpacity>
         </View>
 
@@ -164,12 +178,12 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
             onChangeText={setConfirmPassword}
           />
           <TouchableOpacity style={ProfileStyles.icon} onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-            <Ionicons name={showConfirmPassword ? "eye-off" : "eye"} size={20} color="#007bff" />
+            <Ionicons name={showConfirmPassword ? "eye-off" : "eye"} size={20} color="#FFA500" />
           </TouchableOpacity>
         </View>
 
 
-        <TouchableOpacity style={ProfileStyles.saveBtn}>
+        <TouchableOpacity style={ProfileStyles.saveBtn} onPress={handleChangePassword}>
           <Text style={ProfileStyles.saveText}>XÁC NHẬN</Text>
         </TouchableOpacity>
       </View>
@@ -180,41 +194,33 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           <Text style={ProfileStyles.logoutText}>ĐĂNG XUẤT</Text>
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
+
+
+      {/* Custom Alert Modal dùng chung cho thông báo */}
+      <CustomAlertModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={ProfileStyles.modalContainer}>
-            <View style={ProfileStyles.modalContent}>
-            <Text style={ProfileStyles.modalTitle}>Đăng xuất</Text>
-            <Text style={ProfileStyles.modalMessage}>Bạn có chắc chắn muốn đăng xuất?</Text>
-            <View style={ProfileStyles.modalButtonContainer}>
-                <TouchableOpacity
-                style={[ProfileStyles.modalButton, { backgroundColor: '#ccc' }]}
-                onPress={() => setModalVisible(false)}
-                >
-                <Text style={ProfileStyles.modalButtonText}>Hủy</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                style={[ProfileStyles.modalButton, { backgroundColor: '#007bff' }]}
-                onPress={() => {
-                    setModalVisible(false);
-                    logout();
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'Login' }],
-                    });
-                }}
-                >
-                <Text style={ProfileStyles.modalButtonText}>Đăng xuất</Text>
-                </TouchableOpacity>
-            </View>
-            </View>
-        </View>
-        </Modal>
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => setModalVisible(false)}
+        // Nếu đây là modal đăng xuất, bạn có thể thêm nút xác nhận
+        onConfirm={
+          alertTitle === 'Đăng xuất'
+            ? () => {
+                setModalVisible(false);
+                logout();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                });
+              }
+            : undefined
+        }
+        confirmText={alertTitle === 'Đăng xuất' ? 'Đăng xuất' : 'OK'}
+        cancelText={alertTitle === 'Đăng xuất' ? 'Hủy' : 'Đóng'}
+      />
     </ScrollView>
   );
 };
 
 export default ProfileScreen;
+

@@ -6,7 +6,7 @@ const ProfileStyles = StyleSheet.create({
     backgroundColor: '#fff' 
   },
   header: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#2C5272',
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -31,7 +31,7 @@ const ProfileStyles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#007bff',
+    borderColor: '#FFA500',
     borderRadius: 8,
     padding: 8,
     marginBottom: 12,
@@ -42,7 +42,7 @@ const ProfileStyles = StyleSheet.create({
     marginBottom: 12 
 },
   saveBtn: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#FFA500',
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -56,7 +56,7 @@ const ProfileStyles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutBtn: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#FFA500',
     padding: 12,
     borderRadius: 8,
     width: '100%',
@@ -116,7 +116,7 @@ const ProfileStyles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 10,
-    borderColor: "#007bff",
+    borderColor: "#FFA500",
     position: "relative",
   },
   icon: { 

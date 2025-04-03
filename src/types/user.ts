@@ -26,5 +26,7 @@ export interface AuthContextType {
     confirmPassword: string
   ) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
+  updateUser: (newData: Partial<User>) => Promise<boolean>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
   logout: () => void;
 }

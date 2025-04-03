@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Modal, Image } from 'react-native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -70,9 +70,18 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={RegisterStyles.container}>
-      <View style={RegisterStyles.topContainer}>
-        <Text style={RegisterStyles.title}>Đăng ký</Text>
+      {/* Header với logo và chữ */}
+      <View style={RegisterStyles.headerContainer}>
+        <Image
+          source={require('../assets/logo.png')}
+          style={RegisterStyles.logoImage}
+        />
+        <View style={RegisterStyles.textContainer}>
+          <Text style={RegisterStyles.mainText}>PNP</Text>
+          <Text style={RegisterStyles.subText}>Global Supply</Text>
+        </View>
       </View>
+
 
       <View style={RegisterStyles.formContainer}>
         <TextInput style={RegisterStyles.input} 
@@ -122,7 +131,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={RegisterStyles.link}>Đã có tài khoản? Đăng nhập ngay</Text>
+          <Text style={RegisterStyles.link}>Đã có tài khoản? <Text style={RegisterStyles.loginTextHighlight}>Đăng nhập ngay</Text></Text>
         </TouchableOpacity>
       </View>
 

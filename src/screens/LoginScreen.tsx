@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator, Image} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
@@ -10,8 +10,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('a@gmail.com');
-  const [password, setPassword] = useState('a');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,8 +34,19 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={LoginStyles.container}>
-      <View style={LoginStyles.topBackground} />
-      <Text style={LoginStyles.title}>Đăng nhập</Text>
+
+      {/* Header logo kết hợp chữ */}
+       <View style={LoginStyles.logoContainer}>
+        <Image
+          source={require('../assets/logo.png')}
+          style={LoginStyles.logoImage}
+        />
+        <View style={LoginStyles.textContainer}>
+          <Text style={LoginStyles.mainText}>PNP</Text>
+          <Text style={LoginStyles.subText}>Global Supply</Text>
+        </View>
+      </View>
+
       
       <TextInput
         style={LoginStyles.input}
@@ -65,9 +76,25 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={LoginStyles.buttonText}>ĐĂNG NHẬP</Text>}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={LoginStyles.link}>Chưa có tài khoản? Đăng ký ngay</Text>
-        </TouchableOpacity>
+      {/* Link quên mật khẩu */}
+      <TouchableOpacity
+        style={LoginStyles.forgotPassword}
+        onPress={() => {
+          navigation.navigate('ForgotPassword');
+        }}
+      >
+        <Text style={LoginStyles.forgotPasswordText}>Quên mật khẩu?</Text>
+      </TouchableOpacity>
+
+       {/* Link đăng ký tài khoản */}
+       <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
+        style={LoginStyles.registerContainer}
+      >
+        <Text style={LoginStyles.registerText}>
+          Chưa có tài khoản? <Text style={LoginStyles.registerTextHighlight}>Đăng ký</Text>
+        </Text>
+      </TouchableOpacity>
 
       {/* Modal thông báo đăng nhập thất bại */}
       <Modal

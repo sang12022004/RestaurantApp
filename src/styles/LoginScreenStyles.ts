@@ -6,17 +6,31 @@ const LoginStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#2C5272',
   },
-  topBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '60%',
-    backgroundColor: '#007bff',
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 100,
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    marginLeft: 10,
+    height: 60,
+    justifyContent: 'space-between',
+  },
+  mainText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  subText: {
+    fontSize: 16,
+    color: '#FFF',
   },
   title: {
     fontSize: 28,
@@ -60,7 +74,7 @@ const LoginStyles = StyleSheet.create({
   button: {
     width: '90%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#FFA500',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -68,7 +82,7 @@ const LoginStyles = StyleSheet.create({
     zIndex: 1,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -108,7 +122,26 @@ const LoginStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  link: { color: '#007bff', textAlign: 'center', marginTop: 15 },
+  forgotPassword: {
+    marginTop: 15,
+  },
+  forgotPasswordText: {
+    color: '#FFF',
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
+  registerContainer: {
+    marginTop: 20,
+  },
+  registerText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  registerTextHighlight: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+
 });
 
 export default LoginStyles;
