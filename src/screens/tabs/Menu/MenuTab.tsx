@@ -1,44 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Button, FlatList, Image } from 'react-native';
-import axios from 'axios';
-interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
-
-interface MenuCategory {
-  category: string;
-  items: MenuItem[];
-}
-
-interface MenuData {
-  menu: MenuCategory[];
-}
+import useMenuData from '../../../hooks/useMenuData';
 
 const MenuTab = ({ restaurantId }: { restaurantId: string }) => {
-  const [menu, setMenu] = useState<MenuData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchMenu = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `https://67e2715d97fc65f535361af7.mockapi.io/api/tabs/Menu_Restaurent?id=${restaurantId}`
-        );
-        setMenu(response.data[0]?.menu || null); // Lấy menu từ dữ liệu API
-      } catch (err) {
-        setError('Không thể tải dữ liệu menu.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMenu();
-  }, [restaurantId]);
+  const { menu, loading, error } = useMenuData(restaurantId);
 
   if (loading) {
     return <ActivityIndicator size="large" color="blue" />;
@@ -55,7 +20,7 @@ const MenuTab = ({ restaurantId }: { restaurantId: string }) => {
         <View style={styles.categoryContainer}>
           {category.items.map((item:any) => (
             <View key={item.id} style={styles.card}>
-              {/* Hiển thị hình ảnh món ăn */}
+              {/* Hiển thị ảnh món ăn */}
               {item.image && (
                 <Image source={{ uri: item.image }} style={styles.foodImage} />
               )}

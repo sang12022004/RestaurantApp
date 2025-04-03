@@ -1,15 +1,30 @@
-export type Dish = {
-    id: string;
-    name: string;
-    image: string;
-    price: string;
-  };
-  
-  export type Restaurant = {
-    id: string;
-    name: string;
-    image: string;
-    rating: number;
-    address: string;
-    dishes: Dish[];
-  };
+export type Restaurant = {
+  id: string;
+  name: string;
+  code: string;
+  phone: string;
+  email: string;
+  open_time: string;
+  close_time: string;
+  lowest_avg_cost: string;
+  highest_avg_cost: string;
+  categories: string;
+  facebook?: string;
+  instagram?: string;
+  website?: string;
+  note?: string;
+  is_verified: boolean;
+  address: string | null;
+  partnership: {
+    visits: number;
+    deleted: boolean;
+    poc: string;
+    monthly_use: number;
+    budget: number;
+    provider: string;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  image: string;
+  rating: number;
+};

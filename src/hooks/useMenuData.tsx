@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react';
 import { getMenuById } from '../api/tabs/menuApi'; // Import hàm API đã viết
 
-const useMenuData = (restaurantId) => {
+const useMenuData = (restaurantId:any) => {
   const [menu, setMenu] = useState(null); // Lưu trữ dữ liệu menu
   const [loading, setLoading] = useState(true); // Trạng thái đang tải
   const [error, setError] = useState(null); // Trạng thái lỗi
 
   useEffect(() => {
     const fetchMenu = async () => {
-      setLoading(true); // Bắt đầu tải
-      setError(null); // Xóa lỗi trước đó (nếu có)
+      setLoading(true);
       try {
-        const data = await getMenuById(restaurantId); // Gọi API theo id
-        setMenu(data); // Cập nhật dữ liệu menu
+        const data = await getMenuById(restaurantId); // Gọi API
+        setMenu(data[0]?.menu || null); // Lưu dữ liệu vào state
       } catch (err) {
-        setError(err.message); // Cập nhật lỗi nếu xảy ra
+        setError('Không thể tải dữ liệu menu.'); // Xử lý lỗi
       } finally {
-        setLoading(false); // Hoàn thành tải
+        setLoading(false);
       }
     };
 

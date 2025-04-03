@@ -11,6 +11,12 @@ const RestaurantDetailStyles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
   },
+  StatusInfo:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    marginTop:20,
+    paddingLeft:20
+  },
   header: {
     alignItems: 'center',
     marginTop: 10,

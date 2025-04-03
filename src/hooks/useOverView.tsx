@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export const useOverviewLogic = () => {
 
-    // Hàm onPress
+    // Hàm onPress MicroPhone
     const showAlert = () => {
         window.alert("Microphone pressed!");
       };

@@ -7,6 +7,8 @@ import RestaurantDetailStyles from '../styles/RestaurantDetailStyles';
 import Tabs from '../components/Tabs';
 import RestaurantTabContent from './tabs/RestaurantTabContent';
 import { useRestaurantDetail } from '../hooks/useRestaureantDetail';
+import StatusInfo from '../components/StatusInfo';
+import UpdateButton from '../components/Button_update';
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
@@ -14,12 +16,25 @@ const RestaurantDetail = () => {
   const route = useRoute<DetailScreenRouteProp>();
   const { restaurantId } = route.params;
 
-  const { restaurant, loading, error } = useRestaurantDetail(restaurantId);
+  const { restaurant, loading, error, updateRestaurant } =
+    useRestaurantDetail(restaurantId);
   const [activeTab, setActiveTab] = useState('Overview');
 
   if (loading) return <Text>Đang tải...</Text>;
   if (error) return <Text>{error}</Text>;
   if (!restaurant) return <Text>Không có dữ liệu</Text>;
+
+  const handleUpdate = () => {
+    if (!restaurant) return;
+
+    const updatedData = {
+      name: "Nhà hàng đã cập nhật", // Ví dụ: đổi tên
+      phone: "0987654321",
+    };
+
+    updateRestaurant(updatedData);
+  };
+
 
   return (
     <ScrollView
@@ -49,6 +64,11 @@ const RestaurantDetail = () => {
               </View>
             </View>
           </View>
+          <View style={RestaurantDetailStyles.StatusInfo}>
+            <StatusInfo icon="clock-o" text="6am - 10pm" />
+            <StatusInfo icon="tag" text="40k - 120k" />
+            <StatusInfo icon="handshake-o" text="Partnered" />
+          </View>
           {/* Tabs hiển thị các phần */}
           <Tabs
             tabs={['Overview', 'Menu', 'Reviews']}
@@ -56,8 +76,12 @@ const RestaurantDetail = () => {
             setActiveTab={setActiveTab}
           />
           {/* Nội dung của từng tab */}
-      <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
+          <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
         </View>
+        <View style={{ flex: 1 }}>
+      {/* Nội dung màn hình */}
+      <UpdateButton text="Cập nhật" action={handleUpdate} />
+    </View>
       </View>
     </ScrollView>
   );
