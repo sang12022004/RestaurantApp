@@ -5,57 +5,73 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   Modal,
   Image,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
-import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>;
 
 const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
-  // Giả sử bạn có một hàm forgotPassword trong AuthContext
-  //const { forgotPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-//   const handleForgotPassword = async () => {
-//     if (!email) {
-//       Alert.alert('Lỗi', 'Vui lòng nhập email!');
-//       return;
-//     }
-//     setLoading(true);
-//     try {
-//       // Gọi hàm forgotPassword, ví dụ gửi email reset mật khẩu
-//       await forgotPassword(email);
-//       setMessage('Hướng dẫn lấy lại mật khẩu đã được gửi tới email của bạn.');
-//       setModalVisible(true);
-//     } catch (error: any) {
-//       Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setMessage('Vui lòng nhập email!');
+      setModalVisible(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch('http://10.0.2.2:8080/api/v1/auth/find-forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json();
+      if (response.ok && result.statusCode === 'S2010') {
+        // API trả về thành công
+        setMessage('Gửi yêu cầu thành công!'); // Ví dụ: "Send otp success"
+        setModalVisible(true);
+        // Sau 1.5 giây, chuyển qua màn hình OTP (pass email làm tham số)
+        setTimeout(() => {
+          setLoading(false);
+          setModalVisible(false);
+          navigation.navigate('OTPScreen', { email });
+        }, 1500);
+      } else {
+        setMessage('Gửi yêu cầu thất bại.');
+        setModalVisible(true);
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setMessage('Gửi yêu cầu thất bại.');
+      setModalVisible(true);
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Header với logo và chữ */}
       <View style={styles.logoContainer}>
-              <Image
-                source={require('../assets/logo.png')}
-                style={styles.logoImage}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.mainText}>PNP</Text>
-                <Text style={styles.subText}>Global Supply</Text>
-              </View>
-            </View>
-      
+        <Image
+          source={require('../assets/logo.png')}
+          style={styles.logoImage}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.mainText}>PNP</Text>
+          <Text style={styles.subText}>Global Supply</Text>
+        </View>
+      </View>
+
       {/* Form nhập email */}
       <View style={styles.formContainer}>
         <Text style={styles.instructions}>
@@ -70,7 +86,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button} disabled={loading}>
+        <TouchableOpacity style={styles.button} onPress={handleForgotPassword} disabled={loading}>
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
@@ -106,20 +122,37 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+export default ForgotPasswordScreen;
+
 const styles = StyleSheet.create({
   container: { 
     flex: 1,
     backgroundColor: '#2C5272', // Màu nền chính
   },
-  headerContainer: {
-    backgroundColor: '#4B2C72',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
+  logoContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center', // Căn giữa theo ngang
+    marginTop: 100,
+    marginBottom: 50,
   },
-  headerTitle: {
+  logoImage: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    marginLeft: 10,
+    height: 60, // Chiều cao bằng với logo
+    justifyContent: 'space-between',
+  },
+  mainText: {
     fontSize: 28,
     fontWeight: 'bold',
+    color: '#FFF',
+  },
+  subText: {
+    fontSize: 16,
     color: '#FFF',
   },
   formContainer: {
@@ -202,32 +235,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF',
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', // Thêm dòng này để căn giữa theo ngang
-    marginTop: 100,
-    marginBottom: 50
-  },
-  logoImage: {
-    width: 60,
-    height: 60,
-    resizeMode: 'contain',
-  },
-  textContainer: {
-    marginLeft: 10,
-    height: 60,
-    justifyContent: 'space-between',
-  },
-  mainText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  subText: {
-    fontSize: 16,
-    color: '#FFF',
-  },
 });
-
-export default ForgotPasswordScreen;
