@@ -7,9 +7,9 @@ export const formatTime = (time: string) => {
   };
   
   export const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(parseFloat(amount));
+    const value = parseFloat(amount);
+    if (isNaN(value)) return "0";
+  
+    return `${Math.round(value / 1000)}k`;
   };
   

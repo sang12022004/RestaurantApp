@@ -12,10 +12,10 @@ const RestaurantDetailStyles = StyleSheet.create({
   },
   StatusInfo:{
     flexDirection:'row',
-    justifyContent:'space-between',
+    justifyContent:'space-around',
     marginTop:20,
     paddingLeft:20,
-    flexWrap:'wrap'
+    
   },
   header: {
     alignItems: 'center',
@@ -72,6 +72,27 @@ const RestaurantDetailStyles = StyleSheet.create({
   editIcon: {
     marginLeft: 8,
   },
+  textInput: {
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    padding: 5,
+    fontSize: 16,
+    width: '70%',
+  },
+  saveButton: {
+    backgroundColor: 'aqua', 
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  saveButtonText: {
+    color: 'black', 
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
   });
 
 export default RestaurantDetailStyles;

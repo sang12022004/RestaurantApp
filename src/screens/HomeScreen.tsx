@@ -7,7 +7,7 @@ import HomeScreenStyles from '../styles/HomeScreenStyles';
 import SearchBar from '../components/SearchBar';
 import { useRestaurants, Restaurant } from '../hooks/useRestaurants';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -15,7 +15,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   const { logout } = useAuth();
   const { email } = route.params; // Nhận dữ liệu từ Login
-  const { restaurants, loading, error } = useRestaurants();
+  const { restaurants, loading, error,refetch } = useRestaurants();
   const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(restaurants);
   const { height } = Dimensions.get('window');
 
@@ -23,6 +23,14 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     setFilteredRestaurants(restaurants);
   }, [restaurants]);
+
+    // Sử dụng useFocusEffect để gọi lại refetch mỗi khi màn hình được focus
+    useFocusEffect(
+      React.useCallback(() => {
+        // Gọi lại hàm refetch khi màn hình được focus
+        refetch();
+      }, [refetch])
+    );
 
   const handleLogout = () => {
     logout();
@@ -70,7 +78,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
             renderItem={({ item }) => (
               <TouchableOpacity style={HomeScreenStyles.card}
               onPress={() => navigation.navigate("Detail", { restaurantId: item.id })}
-
+              //onPress={() => navigation.navigate("EditRestaurant", { restaurantId: item.id })}
               >
                 <Image
                   source={{ uri: item.image && item.image !== "" ? item.image : "https://via.placeholder.com/150" }}
@@ -78,7 +86,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                 />
                 <View style={HomeScreenStyles.info}>
                   <Text style={HomeScreenStyles.name}>{item.name}</Text>
-                  <Text style={HomeScreenStyles.address}>{item.address}</Text>
+                  {/* <Text style={HomeScreenStyles.address}>{item.address}</Text> */}
                   <Text style={HomeScreenStyles.rating}>⭐ {item.rating}</Text>
                 </View>
               </TouchableOpacity>

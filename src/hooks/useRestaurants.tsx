@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 export interface Restaurant {
   id: string;
   name: string;
-  image?: string;  // Có thể không có
-  rating?: number; // Có thể không có
+  image?: string;
+  rating?: number;
   address?: string | null;
 }
 
@@ -16,12 +16,16 @@ export const useRestaurants = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // Hàm fetch dữ liệu
+  const fetchRestaurants = useCallback(() => {
+    setLoading(true);
+    setError(null);  // Reset lỗi mỗi khi refetch
+
     axios
       .get(API_URL)
       .then((response) => {
-        console.log("Dữ liệu từ API:", response.data); // Kiểm tra API trả về
-  
+        console.log("Dữ liệu từ API:", response.data);
+
         if (response.data?.data?.data) {
           const formattedRestaurants = response.data.data.data.map((item: any) => ({
             id: item.id,
@@ -30,8 +34,8 @@ export const useRestaurants = () => {
             rating: item.rating || 0,
             address: item.address || "Chưa có địa chỉ",
           }));
-  
-          console.log("Danh sách sau khi format:", formattedRestaurants); // Debug dữ liệu format
+
+          console.log("Danh sách sau khi format:", formattedRestaurants);
           setRestaurants(formattedRestaurants);
         } else {
           throw new Error("Dữ liệu API không hợp lệ");
@@ -45,7 +49,12 @@ export const useRestaurants = () => {
         setLoading(false);
       });
   }, []);
-  
 
-  return { restaurants, loading, error };
+  // Chỉ gọi fetchRestaurants khi component được mount lần đầu tiên
+  useEffect(() => {
+    fetchRestaurants();
+  }, [fetchRestaurants]);
+
+  // Trả về refetch function để gọi lại khi cần
+  return { restaurants, loading, error, refetch: fetchRestaurants };
 };

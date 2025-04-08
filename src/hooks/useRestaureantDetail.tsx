@@ -55,5 +55,17 @@ export const useRestaurantDetail = (id: string) => {
       });
   }, [id]);
 
-  return { restaurant, loading, error };
+
+
+    // Hàm cập nhật nhà hàng
+    const updateRestaurant = async (updatedRestaurantData: Restaurant) => {
+      if (!restaurant?.id) {
+        setError("Không có nhà hàng để cập nhật.");
+        return;
+      }
+      setLoading(true);
+      await axios.put(`${API_URL}/${restaurant.id}`, updatedRestaurantData);
+    };
+
+  return { restaurant, loading, error ,updateRestaurant};
 };
