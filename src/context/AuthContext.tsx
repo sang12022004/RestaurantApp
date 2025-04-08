@@ -24,16 +24,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     confirmPassword: string
   ): Promise<boolean> => {
     
+    try {
       const response = await axios.post(`${API_BASE_URL}/auth/sign-up`, {
         fullname: fullname.trim(),
         email: email.trim(),
         password: password.trim(),
       });
-
+  
       if (response.status === 200 || response.status === 201) {
         return true;
       }
+  
       throw new Error(response.data.message || 'Đăng ký thất bại');
+    } catch (error: any) {
+      // Xử lý email bị trùng
+      if (axios.isAxiosError(error) && error.response) {
+        const status = error.response.status;
+        const message = error.response.data?.message || '';
+  
+        if (status === 400 || status === 409) {
+          if (message.toLowerCase().includes('email')) {
+            throw new Error('Email đã được sử dụng');
+          }
+        }
+  
+        throw new Error(message || 'Đăng ký thất bại');
+      }
+  
+      throw new Error('Lỗi không xác định');
+    }
   };
 
   /**
@@ -66,14 +85,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userId = decodedToken.id;
         const fallbackUser: User = {
           id: userId,
-          deleted: false,
-          created_at: new Date(),
-          updated_at: new Date(),
           fullname: decodedToken.fullName || 'Unknown',
           email: decodedToken.email || email,
           password: '',
           role: 'sales',
-          avatar: null,
+          phone: null,
+          address: null,
           nation: null,
           refresh_token: tokenData.refreshToken,
           refresh_token_exp: tokenData.accessTokenExp
@@ -96,14 +113,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Cập nhật thông tin user từ API /users/{id}
           const fetchedUser: User = {
             id: userObj.id || userId,
-            deleted: userObj.deleted || false,
-            created_at: new Date(userObj.createdAt || Date.now()),
-            updated_at: new Date(userObj.updatedAt || Date.now()),
             fullname: userObj.fullname || decodedToken.fullName || 'Unknown',
             email: userObj.email || decodedToken.email || email,
             password: '',
             role: userObj.role || 'sales',
-            avatar: userObj.avatar || null,
+            phone: userObj.phone || null,
+            address: userObj.address || null,
             nation: userObj.nation || null,
             refresh_token: tokenData.refreshToken,
             refresh_token_exp: tokenData.accessTokenExp
@@ -134,49 +149,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * Hàm updateUser: Gọi API update
    */
   const updateUser = async (newData: Partial<User>): Promise<boolean> => {
+    // Nếu chưa đăng nhập hoặc chưa có user trên context
     if (!user) {
       return false;
     }
+  
     try {
-      const response = await axios.put(`${API_BASE_URL}/users/${user.id}`, newData, {
-      });
-      if (response.status === 200 && response.data.statusCode === 'S2000') {
+      const response = await axios.put(
+        `${API_BASE_URL}/users/${user.id}`,
+        newData
+      );
+  
+      // Kiểm tra điều kiện thành công:
+      //   1) response.status === 200
+      //   2) response.data.statusCode === 'S2000' (hoặc giá trị do backend quy định)
+      if (response.status === 200 && response.data?.statusCode === 'S2000') {
         const updatedUser = response.data.data;
-
+  
+        // Cập nhật user trên Context
         setUser({
           id: updatedUser.id,
-          deleted: updatedUser.deleted || false,
-          created_at: new Date(updatedUser.createdAt || Date.now()),
-          updated_at: new Date(updatedUser.updatedAt || Date.now()),
           fullname: updatedUser.fullname,
           email: updatedUser.email,
-          password: '',
-          role: updatedUser.role || 'sales',
-          avatar: updatedUser.avatar || null,
-          nation: updatedUser.nation || null,
-          refresh_token: updatedUser.refreshToken || null,
-          refresh_token_exp: updatedUser.refreshTokenExp ? new Date(updatedUser.refreshTokenExp) : null,
+          password: '',  // Không trả password về client
+          role: updatedUser.role ?? 'sales',
+          phone: updatedUser.phone ?? null,
+          address: updatedUser.address ?? null,
+          nation: updatedUser.nation ?? null,
+          refresh_token: updatedUser.refreshToken ?? null,
+          refresh_token_exp: updatedUser.refreshTokenExp
+            ? new Date(updatedUser.refreshTokenExp)
+            : null,
         });
+  
+        // Đã update thành công
         return true;
       } else {
+        // API trả về statusCode hoặc status HTTP không hợp lệ => thất bại
+        console.log('API updateUser trả về:', response.data);
         return false;
       }
     } catch (error) {
+      // Bắt lỗi nếu có exception từ axios
+      console.error('Lỗi trong quá trình updateUser:', error);
       return false;
     }
   };
 
   /**
    * Hàm đổi mật khẩu
-   * Gửi PUT /users/change-password/{id} với body { currentPassword, newPassword }
-   * thành công (statusCode === 'S2000'), trả về true, ngược lại false
    */
   const changePassword = async (
     currentPassword: string,
     newPassword: string
   ): Promise<boolean> => {
     if (!user) {
-      console.error('Không có user để đổi mật khẩu');
       return false;
     }
     try {
@@ -191,15 +218,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         response.status === 200 &&
         response.data.statusCode === 'S2000'
       ) {
-        console.log('Password changed successfully');
         return true;
       } else {
-        console.error('Change password failed:', response.data.message);
+        throw new Error(response.data.message || 'Đổi mật khẩu thất bại!');
       }
     } catch (error) {
-      console.error('Error changing password:', error);
+       throw new Error('Mật khẩu cũ chưa chính xác!');
     }
-    return false;
   };
 
 

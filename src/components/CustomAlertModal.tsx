@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmButton: {
-    backgroundColor: '#FF5733', // Nút xác nhận nổi bật
+    backgroundColor: '#FF5733',
   },
   cancelButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: '#FFA500',
   },
   modalButtonText: {
     color: '#fff',

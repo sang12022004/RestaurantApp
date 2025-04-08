@@ -112,7 +112,7 @@ const LoginStyles = StyleSheet.create({
   modalButton: {
     width: '100%',
     height: 40,
-    backgroundColor: '#007bff',
+    backgroundColor: '#FFA500',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,

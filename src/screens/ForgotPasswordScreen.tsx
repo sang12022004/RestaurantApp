@@ -5,64 +5,81 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   Modal,
   Image,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
-import { useAuth } from '../context/AuthContext';
+import ForgotStyles from '../styles/ForgotPasswordStyles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>;
 
 const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
-  // Giả sử bạn có một hàm forgotPassword trong AuthContext
-  //const { forgotPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-//   const handleForgotPassword = async () => {
-//     if (!email) {
-//       Alert.alert('Lỗi', 'Vui lòng nhập email!');
-//       return;
-//     }
-//     setLoading(true);
-//     try {
-//       // Gọi hàm forgotPassword, ví dụ gửi email reset mật khẩu
-//       await forgotPassword(email);
-//       setMessage('Hướng dẫn lấy lại mật khẩu đã được gửi tới email của bạn.');
-//       setModalVisible(true);
-//     } catch (error: any) {
-//       Alert.alert('Lỗi', error.message || 'Gửi yêu cầu thất bại.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setMessage('Vui lòng nhập email!');
+      setModalVisible(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch('http://10.0.2.2:8080/api/v1/auth/find-forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json();
+      if (response.ok && result.statusCode === 'S2010') {
+        // API trả về thành công
+        setMessage('Gửi yêu cầu thành công!'); // Ví dụ: "Send otp success"
+        setModalVisible(true);
+        // Sau 1.5 giây, chuyển qua màn hình OTP (pass email làm tham số)
+        setTimeout(() => {
+          setLoading(false);
+          setModalVisible(false);
+          navigation.navigate('OTPScreen', { email });
+        }, 1500);
+      } else {
+        setMessage('Gửi yêu cầu thất bại.');
+        setModalVisible(true);
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setMessage('Gửi yêu cầu thất bại.');
+      setModalVisible(true);
+      setLoading(false);
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.logoContainer}>
-              <Image
-                source={require('../assets/logo.png')}
-                style={styles.logoImage}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.mainText}>PNP</Text>
-                <Text style={styles.subText}>Global Supply</Text>
-              </View>
-            </View>
-      
+    <View style={ForgotStyles.container}>
+      {/* Header với logo và chữ */}
+      <View style={ForgotStyles.logoContainer}>
+        <Image
+          source={require('../assets/logo.png')}
+          style={ForgotStyles.logoImage}
+        />
+        <View style={ForgotStyles.textContainer}>
+          <Text style={ForgotStyles.mainText}>PNP</Text>
+          <Text style={ForgotStyles.subText}>Global Supply</Text>
+        </View>
+      </View>
+
       {/* Form nhập email */}
-      <View style={styles.formContainer}>
-        <Text style={styles.instructions}>
+      <View style={ForgotStyles.formContainer}>
+        <Text style={ForgotStyles.instructions}>
           Nhập email của bạn để nhận hướng dẫn lấy lại mật khẩu.
         </Text>
         <TextInput
-          style={styles.input}
+          style={ForgotStyles.input}
           placeholder="Email"
           placeholderTextColor="#aaa"
           value={email}
@@ -70,15 +87,15 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button} disabled={loading}>
+        <TouchableOpacity style={ForgotStyles.button} onPress={handleForgotPassword} disabled={loading}>
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>GỬI</Text>
+            <Text style={ForgotStyles.buttonText}>GỬI</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.link}>Quay lại đăng nhập</Text>
+          <Text style={ForgotStyles.link}>Quay lại đăng nhập</Text>
         </TouchableOpacity>
       </View>
 
@@ -89,15 +106,15 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Thông báo</Text>
-            <Text style={styles.modalMessage}>{message}</Text>
+        <View style={ForgotStyles.modalContainer}>
+          <View style={ForgotStyles.modalContent}>
+            <Text style={ForgotStyles.modalTitle}>Thông báo</Text>
+            <Text style={ForgotStyles.modalMessage}>{message}</Text>
             <TouchableOpacity
-              style={styles.modalButton}
+              style={ForgotStyles.modalButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Đóng</Text>
+              <Text style={ForgotStyles.modalButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -105,129 +122,5 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
-    backgroundColor: '#2C5272', // Màu nền chính
-  },
-  headerContainer: {
-    backgroundColor: '#4B2C72',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  formContainer: {
-    flex: 1,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  instructions: {
-    fontSize: 18,
-    color: '#FFF',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    width: '90%',
-    height: 50,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#000',
-    marginBottom: 15,
-  },
-  button: {
-    width: '90%',
-    height: 50,
-    backgroundColor: '#FFA500',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  link: {
-    fontSize: 16,
-    color: '#FFF',
-    textDecorationLine: 'underline',
-    marginTop: 15,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  modalButton: {
-    width: '100%',
-    height: 40,
-    backgroundColor: '#4B2C72',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', // Thêm dòng này để căn giữa theo ngang
-    marginTop: 100,
-    marginBottom: 50
-  },
-  logoImage: {
-    width: 60,
-    height: 60,
-    resizeMode: 'contain',
-  },
-  textContainer: {
-    marginLeft: 10,
-    height: 60,
-    justifyContent: 'space-between',
-  },
-  mainText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFF',
-  },
-  subText: {
-    fontSize: 16,
-    color: '#FFF',
-  },
-});
 
 export default ForgotPasswordScreen;

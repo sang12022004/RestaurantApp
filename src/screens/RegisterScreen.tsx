@@ -44,28 +44,21 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // Kiểm tra email phải có "@gmail.com"
-    if (!email.includes('@gmail.com')) {
-        setErrorMessage('Email không hợp lệ!');
-        setErrorModalVisible(true);
-        return;
-    }
     
-     // Kiểm tra mật khẩu xác nhận có khớp không
-    if (password !== confirmPassword) {
-        setErrorMessage('Mật khẩu xác nhận không khớp!');
-        setErrorModalVisible(true);
-        return;
-    }
-    setLoading(true);
-    const success = await register(fullname, email, password, confirmPassword);
-    setLoading(false);
-
-    if (success) {
+    try {
+      setLoading(true);
+      const success = await register(fullname, email, password, confirmPassword);
+      setLoading(false);
+  
+      if (success) {
         setSuccessMessage('Đăng ký thành công! Hãy đăng nhập.');
+        setModalVisible(true); // Mở modal thành công
+      }
+    } catch (error: any) {
+      setLoading(false);
+      setErrorMessage(error.message || 'Đăng ký thất bại!');
+      setErrorModalVisible(true); // Mở modal báo lỗi
     }
-
-    setModalVisible(true);
   };
 
   return (

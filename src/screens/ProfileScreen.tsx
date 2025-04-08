@@ -1,7 +1,8 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Modal, Keyboard, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { useAuth } from '../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -29,11 +30,23 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
   const [fullName, setFullName] = useState(user?.fullname || '');
   const [email, setEmail] = useState(user?.email || '');
   const [nation, setNation] = useState(user?.nation || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [address, setAddress] = useState(user?.address || '');
 
   // ẩn phím
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      setFullName(user?.fullname || '');
+      setEmail(user?.email || '');
+      setPhone(user?.phone || '');
+      setAddress(user?.address || '');
+      setNation(user?.nation || '');
+    }, [user])
+  );
 
   const handleSave = async () => {
     if (!user) return;
@@ -43,10 +56,16 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
       id: user.id,
       fullname: fullName.trim(),
       email: email.trim(),
+      phone: phone.trim(),
+      address: address.trim(),
       nation: nation.trim(),
     };
     const success = await updateUser(data);
     if (!success) {
+      user.fullname = data.fullname;
+      user.phone = data.phone;
+      user.address = data.address;
+      user.nation = data.nation;
       setAlertTitle('Thành công');
       setAlertMessage('Thông tin đã được cập nhật!');
     } else {
@@ -67,6 +86,12 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
       setModalVisible(true);
       return;
     }
+    if (oldPassword === newPassword) {
+      setAlertTitle('Lỗi');
+      setAlertMessage('Mật khẩu mới không được trùng với mật khẩu cũ!');
+      setModalVisible(true);
+      return;
+    }
     if (newPassword !== confirmPassword) {
       setAlertTitle('Lỗi');
       setAlertMessage('Mật khẩu mới và xác nhận mật khẩu không khớp!');
@@ -74,17 +99,25 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
       return;
     }
 
-    const success = await changePassword(oldPassword.trim(), newPassword.trim());
-    if (success) {
-      setAlertTitle('Thành công');
-      setAlertMessage('Mật khẩu đã được thay đổi!');
-      setOldPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } else {
+    try {
+      const success = await changePassword(
+        oldPassword.trim(),
+        newPassword.trim()
+      );
+  
+      if (success) {
+        setAlertTitle('Thành công');
+        setAlertMessage('Mật khẩu đã được thay đổi!');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch (error: any) {
+      // Bắt lỗi từ throw new Error(...)
       setAlertTitle('Lỗi');
-      setAlertMessage('Đổi mật khẩu thất bại, vui lòng thử lại!');
+      setAlertMessage(error.message || 'Đổi mật khẩu thất bại!');
     }
+  
     setModalVisible(true);
   };
 
@@ -120,6 +153,22 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
+          editable={false}
+        />
+        <Text>Số điện thoại:</Text>
+        <TextInput
+          style={ProfileStyles.input}
+          keyboardType= "phone-pad"
+          value={phone}
+          placeholder='Số điện thoại'
+          onChangeText={setPhone}
+        />
+        <Text>Địa chỉ:</Text>
+        <TextInput
+          style={ProfileStyles.input}
+          value={address}
+          placeholder='Địa chỉ'
+          onChangeText={setAddress}
         />
         <Text>Quốc tịch:</Text>
         <TextInput
@@ -128,6 +177,7 @@ const ProfileScreen: React.FC<Props> = ( {navigation} ) => {
           placeholder='Quốc tịch'
           onChangeText={setNation}
         />
+
 
 
         <TouchableOpacity style={ProfileStyles.saveBtn} onPress={handleSave}>
