@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, StatusBar, ScrollView, View, Text, Image } from 'react-native';
+import React, { useState,useEffect  } from 'react';
+import { TouchableOpacity, StatusBar, ScrollView, View, Text, Image, TextInput,Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -9,21 +9,46 @@ import RestaurantTabContent from './tabs/RestaurantTabContent';
 import { useRestaurantDetail } from '../hooks/useRestaureantDetail';
 import StatusInfo from '../components/StatusInfo';
 import { formatTime, formatCurrency } from "../utils/format";
+import { useNavigation } from '@react-navigation/native'; 
+//import EditRestaurantScreen from './EditRestaurant';
+import { useFocusEffect } from '@react-navigation/native';
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
 const RestaurantDetail = () => {
   const route = useRoute<DetailScreenRouteProp>();
-  const { restaurantId } = route.params;
+  const navigation = useNavigation();
+  const { restaurantId } = route.params ;//as { restaurantId: string }
 
-  const { restaurant, loading, error } = useRestaurantDetail(restaurantId);
+  const { restaurant, loading, error,refetch } = useRestaurantDetail(restaurantId);
+
   const [activeTab, setActiveTab] = useState('Overview');
+  const [name, setName] = useState(restaurant?.name);
+  const [address, setAddress] = useState(restaurant?.address || '');
 
+
+  useEffect(() => {
+    if (restaurant) {
+      setName(restaurant.name); 
+      setAddress(restaurant.address || ''); 
+    }
+  }, [restaurant]);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Khi màn hình này được focus lại (quay về từ EditRestaurant)
+      refetch();
+    }, [restaurantId])
+  );
+ 
   if (loading) return <Text>Đang tải...</Text>;
   if (error) return <Text>{error}</Text>;
   if (!restaurant) return <Text>Không có dữ liệu</Text>;
 
   return (
+   <>
+
     <ScrollView style={RestaurantDetailStyles.scrollContainer} contentContainerStyle={RestaurantDetailStyles.scrollContent}>
       <View style={RestaurantDetailStyles.container}>
         <StatusBar translucent backgroundColor="transparent" />
@@ -32,21 +57,21 @@ const RestaurantDetail = () => {
           <View style={RestaurantDetailStyles.header}>
             <View style={{ alignItems: 'center', marginTop: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={RestaurantDetailStyles.titleRestaurant}>{restaurant.name}</Text>
-                <TouchableOpacity>
+                  <Text style={RestaurantDetailStyles.titleRestaurant}>{name}</Text>
+                <TouchableOpacity  onPress={() => navigation.navigate('EditRestaurant', { restaurantId })}>
                   <Icons name="edit" size={25} color="black" />
                 </TouchableOpacity>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                <Text style={RestaurantDetailStyles.addressRestaurant}>{restaurant.address}</Text>
-                <TouchableOpacity>
+                  <Text style={RestaurantDetailStyles.addressRestaurant}>{address}</Text>
+                <TouchableOpacity   onPress={() => {}}>
                   <Icons name="edit" size={25} color="black" />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
           <View style={RestaurantDetailStyles.StatusInfo}>
-            <StatusInfo icon="clock-o" text={`${formatTime(restaurant.open_time)} - ${formatTime(restaurant.close_time)}`}/>
+            <StatusInfo icon="clock-o" text={`${formatTime(restaurant.open_time)} - ${formatTime(restaurant.close_time)}`} />
             <StatusInfo icon="tag" text={`${formatCurrency(restaurant.lowest_avg_cost)} - ${formatCurrency(restaurant.highest_avg_cost)}`} />
             <StatusInfo icon="handshake-o" text="Partnered" />
           </View>
@@ -55,6 +80,7 @@ const RestaurantDetail = () => {
         </View>
       </View>
     </ScrollView>
+    </>
   );
 };
 

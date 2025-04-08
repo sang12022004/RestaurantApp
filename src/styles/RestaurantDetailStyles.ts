@@ -12,10 +12,9 @@ const RestaurantDetailStyles = StyleSheet.create({
   },
   StatusInfo:{
     flexDirection:'row',
-    justifyContent:'space-between',
+    justifyContent:'space-around',
     marginTop:20,
     paddingLeft:20,
-    flexWrap:'wrap'
   },
   header: {
     alignItems: 'center',

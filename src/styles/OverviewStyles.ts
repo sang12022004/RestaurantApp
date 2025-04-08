@@ -56,6 +56,7 @@ const Overview = StyleSheet.create({
       input: {
         flex: 1,
         backgroundColor: "white",
+        height:40
       },
       
       note: {

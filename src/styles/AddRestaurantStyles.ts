@@ -41,4 +41,5 @@ export default StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+  label:{},
 });

@@ -82,7 +82,7 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
                 />
                 <View style={HomeScreenStyles.info}>
                   <Text style={HomeScreenStyles.name}>{item.name}</Text>
-                  <Text style={HomeScreenStyles.address}>{item.address}</Text>
+                  {/* <Text style={HomeScreenStyles.address}>{item.address}</Text> */}
                   <Text style={HomeScreenStyles.rating}>⭐ {item.rating}</Text>
                 </View>
               </TouchableOpacity>

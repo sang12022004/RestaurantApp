@@ -13,7 +13,7 @@ interface RestaurantTabContentProps {
 const RestaurantTabContent: React.FC<RestaurantTabContentProps> = ({ activeTab, restaurant }) => {
   switch (activeTab) {
     case 'Overview':
-      return <OverviewContent />;
+      return <OverviewContent restaurant={restaurant}/>;
     case 'Menu':
       return (
         <MenuTab restaurantId={restaurant.id} />

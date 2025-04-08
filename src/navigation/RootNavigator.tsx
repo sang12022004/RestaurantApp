@@ -10,6 +10,8 @@ import AddRestaurantScreen from '../screens/AddRestaurantScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import OTPScreen from '../screens/OTPScreen';
 import NewPassScreen from '../screens/NewPassScreen';
+import EditRestaurantScreen from '../screens/EditRestaurant';
+
 
 export type RootStackParamList = {
   Login: undefined;
@@ -21,6 +23,7 @@ export type RootStackParamList = {
   Detail: { restaurantId: string };
   ProfileScreen: { email: string };
   AddRestaurant: { rawData: any };
+  EditRestaurant:{restaurantId: string  }
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,6 +41,7 @@ const RootNavigator = () => {
         <Stack.Screen name="Detail" component={RestaurantDetail} options={{ title: 'Chi tiết nhà hàng' }} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AddRestaurant" component={AddRestaurantScreen} options={{ title: 'Thêm Nhà Hàng' }} />
+        <Stack.Screen name="EditRestaurant" component={EditRestaurantScreen} options={{ title: 'Chỉnh sửa nhà hàng' }}  />
       </Stack.Navigator>
     </NavigationContainer>
   );
