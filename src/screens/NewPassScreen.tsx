@@ -8,7 +8,8 @@ import {
   ActivityIndicator, 
   KeyboardAvoidingView, 
   Platform,
-  Alert
+  Alert,
+  Modal
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootNavigator';
@@ -25,13 +26,26 @@ const NewPassScreen: React.FC<Props> = ({ navigation, route }) => {
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // States cho custom alert modal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const showAlert = (title: string, message: string, onClose?: () => void) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalVisible(true);
+    // Nếu muốn tự động đóng sau 2 giây, uncomment dòng dưới:
+    // setTimeout(() => { setModalVisible(false); if(onClose) onClose(); }, 2000);
+  };
+  
   const handleChangePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mật khẩu!');
+      showAlert('Lỗi', 'Vui lòng nhập đầy đủ mật khẩu!');
       return;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert('Lỗi', 'Mật khẩu mới và xác nhận không khớp!');
+      showAlert('Lỗi', 'Mật khẩu mới và xác nhận không khớp!');
       return;
     }
     
@@ -42,25 +56,25 @@ const NewPassScreen: React.FC<Props> = ({ navigation, route }) => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`, // Gửi accessToken để xác thực
         },
         body: JSON.stringify({
-          newPass: newPassword,
+          newPassword: newPassword,
           newPasswordMatch: confirmPassword,
         }),
       });
-  
+
       const result = await response.json();
-  
-      if (response.ok && result.statusCode === 'S2001') {
-        Alert.alert('Thành công', 'Mật khẩu đã được đặt lại!', [
-          { text: 'OK', onPress: () => navigation.navigate('Login') },
-        ]);
+
+      if (response.ok && result.statusCode === 'S2000') {
+        showAlert('Thành công', 'Mật khẩu đã được đặt lại!', () => {
+          navigation.replace('Login');
+        });
       } else {
-        Alert.alert('Lỗi', 'Đổi mật khẩu thất bại!');
+        showAlert('Lỗi', result.message || 'Đổi mật khẩu thất bại!');
       }
     } catch (error: any) {
-      Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra khi kết nối đến server!');
+      showAlert('Lỗi', error.message || 'Có lỗi xảy ra khi kết nối đến server!');
     } finally {
       setLoading(false);
     }
@@ -69,7 +83,7 @@ const NewPassScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <KeyboardAvoidingView 
       style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'android' ? 'padding' : undefined}
     >
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Đặt mật khẩu mới</Text>
@@ -115,6 +129,30 @@ const NewPassScreen: React.FC<Props> = ({ navigation, route }) => {
           )}
         </TouchableOpacity>
       </View>
+      {/* Custom Alert Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{alertTitle}</Text>
+            <Text style={styles.modalMessage}>{alertMessage}</Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                setModalVisible(false);
+                if (alertTitle === 'Thành công') {
+                  navigation.replace('Login');
+                }
+              }}>
+              <Text style={styles.modalButtonText}>Đóng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
@@ -171,5 +209,43 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalContent: {
+    width: '100%',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
 });

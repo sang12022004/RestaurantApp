@@ -32,9 +32,9 @@ const OTPScreen: React.FC<Props> = ({ navigation, route }) => {
     setOtp(newOtp);
 
     if (text && index < otp.length - 1) {
-        inputs.current[index + 1]?.focus(); // Chuyển sang ô tiếp theo
+        inputs.current[index + 1]?.focus();
       } else if (!text && index > 0) {
-        inputs.current[index - 1]?.focus(); // Quay lại ô trước nếu xóa
+        inputs.current[index - 1]?.focus();
       }
   };
 

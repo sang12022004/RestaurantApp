@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   modalButton: {
     width: '100%',
     height: 40,
-    backgroundColor: '#4B2C72',
+    backgroundColor: '#FFA500',
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
