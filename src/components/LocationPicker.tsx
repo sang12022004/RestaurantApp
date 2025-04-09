@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import SpeechMicButton from '../components/SpeechToText';
 
 const fetchCoordinatesWithOpenCage = async (query: string): Promise<[number, number] | null> => {
   const apiKey = '5775d21d60724d7abc66945786b0bec3';
@@ -32,13 +33,13 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
   const [province, setProvince] = useState('');
   const [district, setDistrict] = useState('');
   const [ward, setWard] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
   const [coords, setCoords] = useState<[number, number] | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [provinceList, setProvinceList] = useState<any[]>([]);
   const [districtList, setDistrictList] = useState<any[]>([]);
   const [wardList, setWardList] = useState<any[]>([]);
+  const [currentNote, setCurrentNote] = useState('');
 
   useEffect(() => {
     fetch('https://provinces.open-api.vn/api/p/')
@@ -92,8 +93,8 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
       const selectedProvince = provinceList.find((p) => p.code === province)?.name;
       const selectedDistrict = districtList.find((d) => d.code === district)?.name;
 
-      const fullAddress = addressDetail
-        ? `${addressDetail}, ${ward}, ${selectedDistrict}, ${selectedProvince}, Việt Nam`
+      const fullAddress = currentNote
+        ? `${currentNote}, ${ward}, ${selectedDistrict}, ${selectedProvince}, Việt Nam`
         : `${ward}, ${selectedDistrict}, ${selectedProvince}, Việt Nam`;
 
       const result = await fetchCoordinatesWithOpenCage(fullAddress);
@@ -110,20 +111,14 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
     };
 
     searchAddress();
-  }, [
-    province,
-    district,
-    ward,
-    addressDetail,
-    provinceList,
-    districtList,
-    onAddressSelected,
-  ]);
+  }, [province, district, ward, provinceList, districtList, onAddressSelected, currentNote]);
 
+  const handleSpeechResult = (text: string) => {
+    setCurrentNote(text);
+  };
 
   return (
     <View style={styles.container}>
-      {/* Hàng đầu tiên: City + District */}
       <View style={styles.row}>
         <View style={styles.pickerContainer}>
           <Text style={styles.label}>City</Text>
@@ -175,7 +170,6 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
         </View>
       </View>
 
-      {/* Hàng thứ 2: Ward (luôn hiển thị) */}
       <View style={styles.row}>
         <View style={[styles.pickerContainer, styles.noMarginRight]}>
           <Text style={styles.label}>Ward</Text>
@@ -195,21 +189,19 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
         </View>
       </View>
 
-      {/* Hàng thứ 3: Address input */}
       <View style={styles.addressRow}>
         <Text style={styles.label}>Address</Text>
         <View style={styles.inputWithIcon}>
           <TextInput
-            value={addressDetail}
-            onChangeText={setAddressDetail}
+            value={currentNote}
+            onChangeText={setCurrentNote}
             placeholder="Số nhà, đường..."
             style={styles.input}
           />
-          <Text style={styles.icon}>🎤</Text>
+          <SpeechMicButton onResult={handleSpeechResult} />
         </View>
       </View>
 
-      {/* Tọa độ hoặc lỗi */}
       {coords && (
         <Text style={styles.result}>
           📍 Tọa độ: {coords[1].toFixed(6)}, {coords[0].toFixed(6)}
@@ -223,8 +215,7 @@ export const LocationPicker = ({ onAddressSelected }: LocationPickerProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   noMarginRight: {
     marginRight: 0,
   },
@@ -286,5 +277,8 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
+  },
+  speechButton: {
+    marginLeft: 8,
   },
 });

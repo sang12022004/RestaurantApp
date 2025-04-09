@@ -12,15 +12,13 @@ import { formatTime, formatCurrency } from "../utils/format";
 import { useNavigation } from '@react-navigation/native';
 //import EditRestaurantScreen from './EditRestaurant';
 import { useFocusEffect } from '@react-navigation/native';
-import RestaurantLocationSelector from '../components/RestaurantLocationSelector';
-
 
 type DetailScreenRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
 const RestaurantDetail = () => {
   const route = useRoute<DetailScreenRouteProp>();
   const navigation = useNavigation();
-  const { restaurantId } = route.params ;//as { restaurantId: string }
+  const { restaurantId } = route.params;//as { restaurantId: string }
 
   const { restaurant, loading, error,refetch } = useRestaurantDetail(restaurantId);
 
@@ -28,11 +26,7 @@ const RestaurantDetail = () => {
   const [name, setName] = useState(restaurant?.name);
   const [address, setAddress] = useState(restaurant?.address || '');
 
-  const styles = StyleSheet.create({
-    locationWrapper: {
-      marginTop: 16,
-    },
-  });
+  
 
   useEffect(() => {
     if (restaurant) {
@@ -49,7 +43,9 @@ const RestaurantDetail = () => {
     }, [restaurantId])
   );
 
-  if (loading) return <Text>Đang tải...</Text>;
+  if (loading) {
+    return <Text>Đang tải...</Text>;
+  }
   if (error) return <Text>{error}</Text>;
   if (!restaurant) return <Text>Không có dữ liệu</Text>;
 
@@ -69,7 +65,7 @@ const RestaurantDetail = () => {
                 </TouchableOpacity>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                  <Text style={RestaurantDetailStyles.addressRestaurant}>{address}</Text>
+                  {/* <Text style={RestaurantDetailStyles.addressRestaurant}>{address}</Text> */}
                 <TouchableOpacity   onPress={() => {}}>
                   <Icons name="edit" size={25} color="black" />
                 </TouchableOpacity>
@@ -83,11 +79,6 @@ const RestaurantDetail = () => {
           </View>
           <Tabs tabs={['Overview', 'Menu', 'Reviews']} activeTab={activeTab} setActiveTab={setActiveTab} />
           <RestaurantTabContent activeTab={activeTab} restaurant={restaurant} />
-          {activeTab === 'Overview' && (
-            <View style={styles.locationWrapper}>
-              <RestaurantLocationSelector />
-            </View>
-          )}
         </View>
       </View>
     </ScrollView>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { View,  StyleSheet } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import ContactInfo from './ContactInfo';
 import CategoryList from './Category';
@@ -8,16 +8,23 @@ import PartnerInfo from './PartnerInfo';
 import NotesSection from './NotesSection';
 import OverviewStyle from '../../../styles/OverviewStyles';
 import { useOverviewLogic } from '../../../hooks/useOverview';
-import { Restaurant } from '../../../types/restaurantTypes'; 
+import { Restaurant } from '../../../types/restaurantTypes';
 import { useCategories } from "../../../hooks/useCategories";
+import RestaurantLocationSelector from '../../../components/RestaurantLocationSelector';
 
 type OverviewContentProps = {
   restaurant: Restaurant;
 };
 
+const styles = StyleSheet.create({
+    locationWrapper: {
+      marginTop: 16,
+    },
+  });
+
 const OverviewContent: React.FC<OverviewContentProps> = ({ restaurant }) => {
 
-  const {selectedPC,setSelectedPC, pcList,} = useOverviewLogic();//dung cho partnership
+  const {selectedPC,setSelectedPC, pcList} = useOverviewLogic();//dung cho partnership
 
   // Khởi tạo state từ prop restaurant
   const [facebook, setFacebook] = useState(restaurant.facebook || '');
@@ -27,26 +34,28 @@ const OverviewContent: React.FC<OverviewContentProps> = ({ restaurant }) => {
   const [note, setNote] = useState(restaurant.note || '');
 
 
+
   useEffect(() => {
     setFacebook(restaurant.facebook || '');
     setInstagram(restaurant.instagram || '');
     setWebsite(restaurant.website || '');
     setNote(restaurant.note || '');
-    setCategories(
-      restaurant.categories
-        ? restaurant.categories.split(",").map((item) => item.trim())
-        : []
-    );
-  }, [restaurant,setCategories]);
-  
+    // setCategories(
+    //   restaurant.categories
+    //     ? restaurant.categories.split(",").map((item) => item.trim())
+    //     : []
+    // );
+  }, [restaurant]);
 
   return (
     <PaperProvider>
       <View style={OverviewStyle.container}>
         <ContactInfo />
         <CategoryList categories={categories} addCategory={addCategory} removeCategory={removeCategory} />
-
-        <SocialLinks 
+          <View style={styles.locationWrapper}>
+            <RestaurantLocationSelector />
+          </View>
+        <SocialLinks
           facebook={facebook}
           setFacebook={setFacebook}
           instagram={instagram}
