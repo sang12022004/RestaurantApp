@@ -43,7 +43,11 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       setErrorModalVisible(true);
       return;
     }
-
+    if (password !== confirmPassword) {
+      setErrorMessage('Mật khẩu và xác nhận mật khẩu không trùng khớp!');
+      setErrorModalVisible(true);
+      return;
+    }
     
     try {
       setLoading(true);
